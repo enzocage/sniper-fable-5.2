@@ -26,7 +26,8 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | `C` `X` `Leertaste` | Hocken, Liegen, Aufstehen |
 | Linksklick / `R` | Schießen / Nachladen |
 | `Tab` / `M` | Taktische Karte |
-| `H` | Verbandspäckchen |
+| `B` | Verbandspäckchen |
+| `H` / `F1` | Hilfe (Feldhandbuch) |
 | `Esc` | Pause |
 
 ## Spielprinzip

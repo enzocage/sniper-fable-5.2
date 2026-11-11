@@ -158,6 +158,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
 #mini{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));width:180px;height:180px;background:rgba(0,0,0,.35);border-radius:50%}
 .over{z-index:8}
 @media (max-width:760px){#mappanel{position:absolute;right:0;bottom:0;top:auto;max-height:46%;width:100%;border-left:0;border-top:1px solid var(--line)}#maphint{display:none}}
+.manual{width:100%;max-height:none}.manual .hbody{overflow:visible}
 </style>
 
 <canvas id="c"></canvas>
@@ -185,7 +186,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
   <div class="wrap">
     <header class="mast">
       <div><h1>Cold <span>Meridian</span></h1><p>Three theatres · six multi-stage contracts</p></div>
-      <div class="purse"><b id="cash">$0</b><small>Account balance</small><button class="ghost" id="menuhelp" style="margin-top:8px">Field manual (F1)</button></div>
+      <div class="purse"><b id="cash">$0</b><small>Account balance</small><button class="ghost" id="menuhelp" style="margin-top:8px">Field manual (H)</button></div>
     </header>
     <div class="cols">
       <section><div class="sheets" id="sheets"></div></section>
@@ -204,7 +205,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
             <dt>C · X · Space</dt><dd>Crouch, go prone, stand.</dd>
             <dt>Left click · R</dt><dd>Fire. Reload.</dd>
             <dt>Tab / M</dt><dd>Tactical map with tagged hostiles and their routes.</dd>
-            <dt>H</dt><dd>Use a field dressing.</dd>
+            <dt>B</dt><dd>Use a field dressing.</dd>
+            <dt>H / F1</dt><dd>Field manual (help).</dd>
             <dt>Esc</dt><dd>Pause.</dd>
           </dl>
         </div>
@@ -218,7 +220,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
 <div id="bigmap" hidden>
   <div class="mapwrap"><canvas id="mapcv"></canvas><div id="maprd"></div><div id="maphint">Wheel: zoom · Drag: pan · Click: set waypoint (again to clear) · Double-click: fit · L: labels · Tab / Esc: close</div></div>
   <aside id="mappanel">
-    <div class="mp-top"><button id="maphelp" class="ghost">Help (F1)</button><button id="mapclose" class="ghost">Close (Tab)</button></div>
+    <div class="mp-top"><button id="maphelp" class="ghost">Help (H)</button><button id="mapclose" class="ghost">Close (Tab)</button></div>
     <div id="mapinfo"></div>
     <h3>Layers</h3>
     <div class="mp-layers">
@@ -231,7 +233,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
 </div>
 <div id="help" hidden>
   <div class="hcard">
-    <header><h2>Field manual</h2><button id="helpclose" class="ghost">Close (F1 / Esc)</button></header>
+    <header><h2>Field manual</h2><button id="helpclose" class="ghost">Close (H / Esc)</button></header>
     <nav><button class="htab on">Quick start</button><button class="htab">Controls</button><button class="htab">Shooting</button><button class="htab">Stealth</button><button class="htab">Missions and map</button><button class="htab">Glossary</button></nav>
     <div class="hbody">
       <section class="hpage"><h3>Your first contract in six steps</h3><ol>
@@ -241,7 +243,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
         <li><b>Scope in (right click) and tag.</b> Keep the crosshair on a person for a moment to tag them. The range shows at the bottom of the scope. Set the zero (Q / E) to that range.</li>
         <li><b>Hold your breath (Shift) and fire.</b> Hold breath steadies the rifle and slows time. The red dot shows where the shot lands if the assist is on.</li>
         <li><b>Leave through the exfil marker</b> after the last required objective. Guards who find a body or hear a shot start searching: be gone before they do.</li></ol>
-        <p class="hnote">Open this manual any time with <b>F1</b>.</p></section>
+        <p class="hnote">Open this manual any time with <b>H</b> (or F1).</p></section>
       <section class="hpage" hidden><h3>Controls</h3><table class="ktab">
         <tr><td>W A S D</td><td>Move. Shift sprints (raises pulse). On a ladder W climbs, S descends.</td></tr>
         <tr><td>Mouse</td><td>Look. Mouse speed is on the contract board.</td></tr>
@@ -252,9 +254,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
         <tr><td>Q / E</td><td>Zero distance down / up by 50 m (100-600 m).</td></tr>
         <tr><td>1 · 2 · 3</td><td>Standard · armour piercing · lure rounds.</td></tr>
         <tr><td>C · X · Space</td><td>Crouch · prone · stand.</td></tr>
-        <tr><td>H</td><td>Field dressing: restores 60 health.</td></tr>
+        <tr><td>B</td><td>Bandage (field dressing): restores 60 health.</td></tr>
         <tr><td>Tab / M</td><td>Overview map. The game pauses while it is open.</td></tr>
-        <tr><td>F1</td><td>This manual.</td></tr>
+        <tr><td>H / F1</td><td>This manual. Closes with H or Esc.</td></tr>
         <tr><td>Esc / P</td><td>Pause.</td></tr></table></section>
       <section class="hpage" hidden><h3>Reading the scope</h3>
         <svg viewBox="0 0 320 200" class="hsvg" role="img" aria-label="Mil reticle diagram"><circle cx="100" cy="100" r="90" fill="#0f1419" stroke="#2d3a48"/><path d="M10 100H190M100 10V190" stroke="#ddd6c6" stroke-width="1.5"/><g stroke="#ddd6c6">
@@ -294,7 +296,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
   </div>
 </div>
 
-<div id="pause" class="over" hidden><div class="card"><h2>Paused</h2><p>Click Resume to take the rifle back.</p><div class="btns"><button class="pri" id="resume">Resume</button><button id="pausehelp">Help (F1)</button><button id="abort">Abort contract</button></div></div></div>
+<div id="pause" class="over" hidden><div class="card"><h2>Paused</h2><p>Click Resume to take the rifle back.</p><div class="btns"><button class="pri" id="resume">Resume</button><button id="pausehelp">Help (H)</button><button id="abort">Abort contract</button></div></div></div>
 <div id="result" class="over" hidden><div class="card"><h2 id="rtitle"></h2><p id="rtext"></p><table id="rtable"></table><div class="btns"><button class="pri" id="rboard">Contract board</button><button id="retry">Run it again</button></div></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1440,7 +1442,7 @@ $('resume').onclick=resume;$('abort').onclick=()=>{$('pause').hidden=true;toMenu
 $('rboard').onclick=toMenu;$('retry').onclick=()=>startContract(G_.ci);
 function toMenu(){MP.open=false;bigmap.hidden=true;$('help').hidden=true;G_.state='menu';$('result').hidden=true;$('hud').hidden=true;$('menu').hidden=false;activeCam=camera;gunModel.visible=false;camera.fov=55;camera.updateProjectionMatrix();renderMenu()}
 addEventListener('keydown',e=>{
-  if(e.code==='F1'||(e.key==='?'&&G_.state!=='menu')){e.preventDefault();if($('help').hidden)openHelp();else closeHelp();return}
+  if(e.code==='F1'||e.code==='KeyH'||e.key==='?'){e.preventDefault();if($('help').hidden)openHelp();else closeHelp();return}
   if(!$('help').hidden){if(e.code==='Escape'){e.preventDefault();closeHelp()}return}
   if(G_.state==='map'){if(['Tab','KeyM','Escape'].includes(e.code)){e.preventDefault();toggleMap(false)}else if(e.code==='KeyL')$('ly-labels').click();
     else if(e.code==='Equal'||e.code==='NumpadAdd')MP.view.s=clamp(MP.view.s*1.3,MP.fit*.8,MP.fit*9);else if(e.code==='Minus'||e.code==='NumpadSubtract')MP.view.s=clamp(MP.view.s/1.3,MP.fit*.8,MP.fit*9);else if(e.code==='Digit0')fitView();
@@ -1458,7 +1460,7 @@ addEventListener('keydown',e=>{
     if((e.code==='Tab'||e.code==='KeyM')&&!e.repeat)toggleMap(true);
     const n=['Digit1','Digit2','Digit3'].indexOf(e.code);
     if(n>=0&&n!==P.type&&P.reload<=0){if(P.pool[AMMO[n].k]>0){P.type=n;P.bolt=Math.max(P.bolt,.7);sfx.click();feed(['Standard ball','Armour-piercing: passes through bodies, crates, planks and floors','Lure: draws nearby guards to the impact'][n])}else feed('No '+AMMO[n].n+' rounds left')}
-    if(e.code==='KeyH'&&P.med>0&&P.hp<100){P.med--;P.hp=Math.min(100,P.hp+60);P.bolt=Math.max(P.bolt,1.5);sfx.heal();feed('Field dressing applied')}
+    if(e.code==='KeyB'&&P.med>0&&P.hp<100){P.med--;P.hp=Math.min(100,P.hp+60);P.bolt=Math.max(P.bolt,1.5);sfx.heal();feed('Field dressing applied')}
     if((e.code==='Escape'||e.code==='KeyP')&&!e.repeat)pause();
   }else if(G_.state==='pause'&&e.code==='KeyP')resume();
   keys[e.code]=true;
@@ -1919,8 +1921,11 @@ function drawMini(){
 let helpFrom=null;
 function openHelp(){const hp=$('help');if(!hp.hidden)return;helpFrom=G_.state;if(G_.state==='play'){G_.state='pause';unlock()}hp.hidden=false}
 function closeHelp(){$('help').hidden=true;if(helpFrom==='play'&&G_.state==='pause'){resume()}else if(helpFrom==='pause'){$('pause').hidden=false}helpFrom=null}
-function setupHelp(){const tabs=[...document.querySelectorAll('#help .htab')],pages=[...document.querySelectorAll('#help .hpage')];
-  tabs.forEach((t,i)=>t.onclick=()=>{tabs.forEach(x=>x.classList.toggle('on',x===t));pages.forEach((p,j)=>p.hidden=j!==i)});$('helpclose').onclick=closeHelp;$('menuhelp').onclick=openHelp;$('pausehelp').onclick=()=>{$('pause').hidden=true;openHelp()}}
+function wireTabs(root){const tabs=[...root.querySelectorAll('.htab')],pages=[...root.querySelectorAll('.hpage')];tabs.forEach((t,i)=>t.onclick=()=>{tabs.forEach(x=>x.classList.toggle('on',x===t));pages.forEach((p,j)=>p.hidden=j!==i)})}
+function setupHelp(){const card=document.querySelector('#help .hcard');wireTabs(card);
+  const m=document.createElement('section');m.className='hcard manual';m.innerHTML='<p class="label" style="padding:14px 18px 0;margin:0">Field manual · the same guide as in game (key H)</p>';
+  m.appendChild(card.querySelector('nav').cloneNode(true));m.appendChild(card.querySelector('.hbody').cloneNode(true));wireTabs(m);document.querySelector('#menu .wrap').appendChild(m);
+  $('helpclose').onclick=closeHelp;$('menuhelp').onclick=()=>{m.scrollIntoView({behavior:'smooth',block:'start'})};$('pausehelp').onclick=()=>{$('pause').hidden=true;openHelp()}}
 
 /* ================= menu ================= */
 function renderMenu(){
