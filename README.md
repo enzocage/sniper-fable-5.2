@@ -1,5 +1,7 @@
 # Cold Meridian
 
+**Gebäude:** 20 Bautypen im Marskolonie-Stil (Kuppel, Zelt-Tonne, Zikkurat, Trommelturm, Doppelkuppel, Pilz, Radar-Hab, Gewächshaus, Spire, Silo-Gruppe, Hangar, Pyramide, Untertasse, gerippte Kuppel, Würfel-Labor, Röhren-Knoten, Terrassenkugel, Segeldach, Trommel mit Kegel, Himmelskapseln) in allen Größen und mit 1 bis 4 Stockwerken, verteilt auf alle Karten.
+
 **Setting:** eine Marskolonie. Rostrote Wüste mit Mondkratern in allen Größen (von wenigen Metern bis über 100 m), Felsbrocken statt Bäumen, weiße Kolonie-Module mit Kuppeln, Antennen, Solarfeldern und Lichtleisten, keine Vögel. Du bist der einzige Mensch, alle Gegner sind Roboter.
 
 Ein 3D-Scharfschützenspiel für den Browser, in einer einzigen HTML-Datei (`cold-meridian.html`). Kein Build, keine Assets: Gelände, Gebäude, Figuren und der komplette Ton werden beim Start im Browser erzeugt. Das Spiel ist von Spielen wie *Sniper Ghost Warrior Contracts* inspiriert, aber eigenständig (eigene Welt, Figuren, Aufträge).

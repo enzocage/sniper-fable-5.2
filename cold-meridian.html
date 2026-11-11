@@ -722,6 +722,43 @@ function marsVault(x,z,w,d,top){const B=L.B,alongX=w>=d,R=(alongX?d:w)/2*1.05,le
   for(let i=0;i<S;i++)for(let k=0;k<K;k++){const t0=i/S*3.1416,t1=(i+1)/S*3.1416,u0=k/K,u1=(k+1)/K,A=pt(t0,u0),Bq=pt(t1,u0),C=pt(t1,u1),Dd=pt(t0,u1),c=(i+k)%2?pn:wh;quad(B,A[0],A[1],A[2],Bq[0],Bq[1],Bq[2],C[0],C[1],C[2],Dd[0],Dd[1],Dd[2],c)}
   for(const u of[0,1])for(let i=0;i<S;i++){const t0=i/S*3.1416,t1=(i+1)/S*3.1416,A=pt(t0,u),Bq=pt(t1,u),Cn=pt(0,u),Cm=alongX?[Cn[0],top,z]:[x,top,Cn[2]];tri(B,Cm[0],Cm[1],Cm[2],A[0],A[1],A[2],Bq[0],Bq[1],Bq[2],band)}
   bx(x+(alongX?len*.3:0),top+hh,z+(alongX?0:len*.3),.12,1.8,.12,0xc9ced4,{nocol:true})}
+/* ---- 20 Mars colony building types: the shell on top of a house() footprint ---- */
+const BT_NAMES=['Dome hab','Vault tent','Ziggurat','Drum tower','Twin dome','Mushroom','Radar hab','Greenhouse','Spire hab','Silo cluster','Hangar arch','Pyramid','Saucer','Ribbed dome','Cube lab','Tube junction','Terraced sphere','Sail canopy','Drum and cone','Sky pods'];
+const boxB=(x,y,z,w,h,d,c)=>bx(x,y,z,w,h,d,c,{nocol:true});
+function cylB(cx,cz,r,y0,y1,color,N,capColor){N=N||14;const cc=col(color),ca=col(capColor===undefined?color:capColor);for(let i=0;i<N;i++){const a0=i/N*6.2832,a1=(i+1)/N*6.2832,x0=cx+Math.cos(a0)*r,z0=cz+Math.sin(a0)*r,x1=cx+Math.cos(a1)*r,z1=cz+Math.sin(a1)*r;quad(L.B,x0,y0,z0,x1,y0,z1,x1,y1,z1,x0,y1,z0,i%2?cc.clone().multiplyScalar(.93):cc);if(capColor!==false)tri(L.B,cx,y1,cz,x0,y1,z0,x1,y1,z1,ca)}}
+function coneB(cx,cz,r,y0,y1,color,N,alt){N=N||14;const c1=col(color),c2=col(alt||color);for(let i=0;i<N;i++){const a0=i/N*6.2832,a1=(i+1)/N*6.2832;tri(L.B,cx+Math.cos(a0)*r,y0,cz+Math.sin(a0)*r,cx+Math.cos(a1)*r,y0,cz+Math.sin(a1)*r,cx,y1,cz,i%2?c2:c1)}}
+function domeB(x,z,a,b,y0,hh,c1,c2,Lr,M,band,stripe){Lr=Lr||6;M=M||20;const w1=col(c1),w2=col(c2),bd=col(band||c2),st=col(stripe||c2);const pt=(ph,al)=>[x+a*Math.cos(ph)*Math.cos(al),y0+hh*Math.sin(ph),z+b*Math.cos(ph)*Math.sin(al)];
+  for(let j=0;j<Lr;j++)for(let k=0;k<M;k++){const p0=j/Lr*1.5708,p1=(j+1)/Lr*1.5708,a0=k/M*6.2832,a1=(k+1)/M*6.2832,A=pt(p0,a0),Bq=pt(p0,a1),C=pt(p1,a1),Dd=pt(p1,a0),c=j===0&&band?bd:(stripe&&k%2?st:(k+j)%2?w2:w1);if(j===Lr-1)tri(L.B,A[0],A[1],A[2],Bq[0],Bq[1],Bq[2],C[0],C[1],C[2],c);else quad(L.B,A[0],A[1],A[2],Bq[0],Bq[1],Bq[2],C[0],C[1],C[2],Dd[0],Dd[1],Dd[2],c)}}
+function glassVault(x,z,w,d,top){const alongX=w>=d,R=(alongX?d:w)/2*1.03,len=(alongX?w:d)+.3,hh=R*.8,S=12,K=Math.max(3,Math.round(len/2.2)),G=L.GD,gc=_c.setRGB(1,1,1);
+  const pt=(th,u)=>alongX?[x-len/2+u*len,top+Math.sin(th)*hh,z+Math.cos(th)*R]:[x+Math.cos(th)*R,top+Math.sin(th)*hh,z-len/2+u*len];
+  for(let i=0;i<S;i++)for(let k=0;k<K;k++){const t0=i/S*3.1416,t1=(i+1)/S*3.1416,u0=k/K,u1=(k+1)/K,A=pt(t0,u0),Bq=pt(t1,u0),C=pt(t1,u1),Dd=pt(t0,u1);quad(G,A[0],A[1],A[2],Bq[0],Bq[1],Bq[2],C[0],C[1],C[2],Dd[0],Dd[1],Dd[2],gc)}
+  for(let k=0;k<=K;k++){const u=k/K;for(let i=0;i<S;i++){const A=pt(i/S*3.1416,u),Bq=pt((i+1)/S*3.1416,u);const c=col(0xe9ecef);quad(L.B,A[0],A[1],A[2],Bq[0],Bq[1],Bq[2],Bq[0],Bq[1]+.12,Bq[2],A[0],A[1]+.12,A[2],c)}}}
+function marsTopper(t,x,z,w,d,top,x0,x1,z0,z1,r){
+  const m=Math.min(w,d),M=Math.max(w,d),WH=0xeef0f2,PN=0xd6dade,OR=0xe4572e,GR=0xaab1b8,DK=0x2c3238,GL=0x16222c;
+  switch(t){
+  case 0:marsDome(x,z,w,d,top);break;
+  case 1:marsVault(x,z,w,d,top);break;
+  case 2:boxB(x,top,z,w*.92,1.1,d*.92,WH);boxB(x,top+1.1,z,w*.7,1.1,d*.7,PN);boxB(x,top+2.2,z,w*.46,1.1,d*.46,WH);boxB(x,top+3.3,z,.3,2.6,.3,GR);boxB(x,top+5.9,z,.5,.5,.5,0xff6a3a);boxB(x,top+1.0,z,w*.93,.12,d*.93,OR);break;
+  case 3:{const R=m*.32;cylB(x,z,R,top,top+3.6,WH,16,false);for(let k=0;k<8;k++){const a=k/8*6.2832;boxB(x+Math.cos(a)*(R+.02),top+1.4,z+Math.sin(a)*(R+.02),.8,.8,.8,GL)}domeB(x,z,R*1.04,R*1.04,top+3.6,R*.75,WH,PN,5,16,OR);boxB(x,top+3.6+R*.75,z,.14,1.6,.14,GR);break}
+  case 4:{const ax=w>=d,o1=(ax?w:d)*.25;domeB(x+(ax?-o1:0),z+(ax?0:-o1),(ax?w*.24:w/2)*1.1,(ax?d/2:d*.24)*1.1,top,m*.4,WH,PN,5,18,OR);domeB(x+(ax?o1:0),z+(ax?0:o1),(ax?w*.24:w/2)*1.1,(ax?d/2:d*.24)*1.1,top,m*.4,WH,PN,5,18,OR);boxB(x,top,z,ax?o1:1,.5,ax?1:o1,GR);break}
+  case 5:{const R=M*.6;cylB(x,z,R,top+.1,top+.5,WH,18,PN);cylB(x,z,R*1.0,top+.5,top+.62,OR,18,false);cylB(x,z,R*.18,top,top+.1,GR,8,false);domeB(x,z,R*.35,R*.35,top+.5,m*.2,PN,WH,4,14);break}
+  case 6:{marsDome(x,z,w,d,top);const hh=m*.46;boxB(x+w*.28,top+hh*.5,z-d*.1,.4,hh+1,.4,GR);cylB(x+w*.28,z-d*.1,m*.2,top+hh+1,top+hh+1.2,WH,14,WH);boxB(x+w*.28,top+hh+1.2,z-d*.1,.2,2.2,.2,GR);boxB(x+w*.28,top+hh+3.4,z-d*.1,.6,.6,.6,OR);break}
+  case 7:glassVault(x,z,w,d,top);break;
+  case 8:{const R=m*.2+.5,H0=7+Math.min(w,d)*.5;cylB(x,z,R*1.8,top,top+1,WH,14);cylB(x,z,R,top+1,top+H0,WH,12,false);for(let k=0;k<3;k++)cylB(x,z,R*1.1,top+H0*.3+k*H0*.22,top+H0*.3+k*H0*.22+.35,OR,12,false);domeB(x,z,R*1.2,R*1.2,top+H0,R,WH,PN,4,12,OR);boxB(x,top+H0+R,z,.12,2,.12,GR);boxB(x,top+H0+R+2,z,.4,.4,.4,0xff6a3a);break}
+  case 9:{const n=Math.max(2,Math.min(4,Math.round(M/5)));const ax=w>=d;for(let k=0;k<n;k++){const u=(k+.5)/n-.5,px=x+(ax?u*w*.8:0),pz=z+(ax?0:u*d*.8),R=m*.2+.2,hh=2.6+(k%2)*1.8;cylB(px,pz,R,top,top+hh,WH,12,false);coneB(px,pz,R*1.05,top+hh,top+hh+R*1.3,k%2?OR:PN,12,WH)}break}
+  case 10:{marsVault(x,z,w,d,top);const ax=w>=d,R=m/2;boxB(x+(ax?w/2+.1:0),top,z+(ax?0:d/2+.1),ax?.2:R*1.5,R*.9,ax?R*1.5:.2,GL);break}
+  case 11:{const e=.3,hh=m*.55,c1=col(WH),c2=col(PN),oc=col(OR);const A=[x0-e,top,z0-e],B_=[x1+e,top,z0-e],C=[x1+e,top,z1+e],D=[x0-e,top,z1+e],P=[x,top+hh,z];[[A,B_,c1],[B_,C,c2],[C,D,c1],[D,A,c2]].forEach(f=>tri(L.B,f[0][0],f[0][1],f[0][2],f[1][0],f[1][1],f[1][2],P[0],P[1],P[2],f[2]));boxB(x,top+hh,z,.12,2,.12,GR);boxB(x,top+hh+2,z,.4,.4,.4,0xff6a3a);break}
+  case 12:{const R=M*.7;cylB(x,z,R,top+.2,top+.8,PN,20,WH);cylB(x,z,R*1.02,top+.8,top+.95,OR,20,false);cylB(x,z,R*.6,top+.95,top+1.5,WH,16,PN);domeB(x,z,R*.38,R*.38,top+1.5,R*.2,GL,DK,4,14);cylB(x,z,R*.6,top+.2,top+.2,DK,16,false);break}
+  case 13:domeB(x,z,w/2*1.12,d/2*1.12,top,m*.5,WH,PN,7,24,OR,OR);boxB(x,top+m*.5-.1,z,.12,1.6,.12,GR);break;
+  case 14:{boxB(x-w*.2,top,z-d*.15,w*.36,1.8,d*.34,WH);boxB(x+w*.2,top,z+d*.18,w*.3,2.6,d*.3,PN);boxB(x+w*.18,top+2.6,z+d*.16,w*.2,1.2,d*.2,WH);boxB(x,top,z,w*.5,.35,.9,GR);boxB(x-w*.3,top+1.8,z-d*.2,.12,3.4,.12,GR);boxB(x-w*.3,top+4.9,z-d*.2,1.2,.1,1.2,WH);boxB(x+w*.3,top+3.8,z+d*.3,.4,.4,.4,OR);break}
+  case 15:{marsDome(x,z,w,d,top);const y=top-2,rr=1.0;for(const[ax,az,sx,sz]of[[x0,z,-1,0],[x1,z,1,0],[x,z0,0,-1],[x,z1,0,1]]){const L_=3.5+r()*2.5;boxB(ax+sx*L_/2,y-rr,az+sz*L_/2,sx?L_:rr*2,rr*2,sz?L_:rr*2,WH);boxB(ax+sx*L_,y-rr-.3,az+sz*L_,sx?.3:rr*2.2,rr*2.6,sz?.3:rr*2.2,OR)}break}
+  case 16:{const R0=m*.55;cylB(x,z,R0,top,top+1.6,WH,16,false);cylB(x,z,R0*.78,top+1.6,top+3.2,PN,16,false);cylB(x,z,R0*.54,top+3.2,top+4.8,WH,14,false);cylB(x,z,R0*1.01,top+1.5,top+1.7,OR,16,false);cylB(x,z,R0*.79,top+3.1,top+3.3,OR,16,false);domeB(x,z,R0*.5,R0*.5,top+4.8,R0*.4,WH,PN,4,14);break}
+  case 17:{const ax=w>=d,e=.5,hr=m*.45,c1=col(WH),c2=col(PN),oc=col(OR);const a=[x0-e,top,z0-e],b=[x1+e,top,z0-e],c=[x1+e,top,z1+e],dd=[x0-e,top,z1+e];
+    if(ax){const ra=[x0-e,top+hr*1.1,z-d*.1],rb=[x1+e,top+hr*1.1,z-d*.1];quad(L.B,a[0],a[1],a[2],b[0],b[1],b[2],rb[0],rb[1],rb[2],ra[0],ra[1],ra[2],c1);quad(L.B,dd[0],dd[1],dd[2],c[0],c[1],c[2],rb[0],rb[1],rb[2],ra[0],ra[1],ra[2],c2);tri(L.B,a[0],a[1],a[2],dd[0],dd[1],dd[2],ra[0],ra[1],ra[2],oc);tri(L.B,b[0],b[1],b[2],c[0],c[1],c[2],rb[0],rb[1],rb[2],oc);boxB(x1+e,top,z-d*.1,.14,hr*1.4,.14,GR)}
+    else{const ra=[x-w*.1,top+hr*1.1,z0-e],rb=[x-w*.1,top+hr*1.1,z1+e];quad(L.B,a[0],a[1],a[2],dd[0],dd[1],dd[2],rb[0],rb[1],rb[2],ra[0],ra[1],ra[2],c1);quad(L.B,b[0],b[1],b[2],c[0],c[1],c[2],rb[0],rb[1],rb[2],ra[0],ra[1],ra[2],c2);tri(L.B,a[0],a[1],a[2],b[0],b[1],b[2],ra[0],ra[1],ra[2],oc);tri(L.B,dd[0],dd[1],dd[2],c[0],c[1],c[2],rb[0],rb[1],rb[2],oc);boxB(x-w*.1,top,z1+e,.14,hr*1.4,.14,GR)}break}
+  case 18:{const R=m*.34;cylB(x,z,R,top,top+2.6,PN,16,false);cylB(x,z,R*1.02,top+2.5,top+2.7,OR,16,false);coneB(x,z,R*1.15,top+2.7,top+2.7+R*2.2,WH,16,OR);boxB(x,top+2.7+R*2.2,z,.1,1.8,.1,GR);break}
+  default:{const R=m*.22+.4;for(const s of[-1,1]){const px=x+(w>=d?s*w*.26:0),pz=z+(w>=d?0:s*d*.26);cylB(px,pz,R,top,top+1.6,WH,12,false);domeB(px,pz,R*1.05,R*1.05,top+1.6,R*.8,WH,PN,4,12,OR)}boxB(x,top+1.1,z,w>=d?w*.52:.9,.6,w>=d?.9:d*.52,GR)}
+  }}
 function house(x,z,w,d,o){o=o||{};const fl=o.floors||2,FH=o.fh||3,r=rng(Math.round(x*7+z*13)+fl*31);
   const x0=x-w/2,x1=x+w/2,z0=z-d/2,z1=z+d/2,hs=[H(x0,z0),H(x1,z0),H(x0,z1),H(x1,z1)];
   const y0=o.base!==undefined?o.base:Math.max(...hs)+.25,lo=o.base!==undefined?o.base-.3:Math.min(...hs)-1.5;
@@ -751,7 +788,7 @@ function house(x,z,w,d,o){o=o||{};const fl=o.floors||2,FH=o.fh||3,r=rng(Math.rou
     else{quad(B,x1+e,top,z1+e,x1+e,top,z0-e,x,top+rh,z0-e,x,top+rh,z1+e,rc);quad(B,x0-e,top,z0-e,x0-e,top,z1+e,x,top+rh,z1+e,x,top+rh,z0-e,rc);tri(B,x0,top,z0,x1,top,z0,x,top+rh,z0,wc);tri(B,x1,top,z1,x0,top,z1,x,top+rh,z1,wc)}
     if(o.chimney!==false){bx(x+w*.25,top,z+(w>=d?0:d*.2),.7,rh+.9,.7,0x5b4a42,{nocol:true});if(L.def.smoke&&r()<.55)L.emit.push([x+w*.25,top+rh+1.1,z+(w>=d?0:d*.2)])}
   }else if(roof==='pyr'){const rh=o.rh||4,B=L.B;tri(B,x0-e,top,z1+e,x1+e,top,z1+e,x,top+rh,z,rc);tri(B,x1+e,top,z1+e,x1+e,top,z0-e,x,top+rh,z,rc);tri(B,x1+e,top,z0-e,x0-e,top,z0-e,x,top+rh,z,rc);tri(B,x0-e,top,z0-e,x0-e,top,z1+e,x,top+rh,z,rc)}
-  else if(roof==='mars'&&!o.roofAccess){const e2=Math.max(w,d)/Math.min(w,d);if(e2>1.5)marsVault(x,z,w,d,top);else marsDome(x,z,w,d,top);const cc=0xe9ecef;for(const[cx,cz]of[[x0,z0],[x1,z0],[x0,z1],[x1,z1]])marsColumn(cx,cz,.55,y0,top+.1,cc);
+  else if(roof==='mars'&&!o.roofAccess){let mt=o.mtype!==undefined?o.mtype:Math.floor(r()*20);if(Math.min(w,d)<7&&[4,5,12,15,19,16,3].includes(mt))mt=mt%2;if(Math.max(w,d)/Math.min(w,d)>1.9&&[3,5,12,13,16,18,8].includes(mt))mt=1;marsTopper(mt,x,z,w,d,top,x0,x1,z0,z1,r);const cc=0xe9ecef;for(const[cx,cz]of[[x0,z0],[x1,z0],[x0,z1],[x1,z1]])marsColumn(cx,cz,.55,y0,top+.1,cc);
     const sy0=y0+.4,sy1=top-.4;for(const[cx,cz]of[[x0,z0],[x1,z0],[x0,z1],[x1,z1]])boxGeo(L.GL,cx-.04,sy0,cz-.04,cx+.04,sy1,cz+.04,_c.setRGB(1,.95,.85))}
   else if(roof==='mars'){
     for(const[a,b,c2,d2]of[[x0-.2,z0-.2,x1+.2,z0+.25],[x0-.2,z1-.25,x1+.2,z1+.2],[x0-.2,z0-.2,x0+.25,z1+.2],[x1-.25,z0-.2,x1+.2,z1+.2]])bxr(a,top,b,c2,top+.5,d2,0xbfc5cc,{nocol:true});
@@ -1017,6 +1054,18 @@ function landingPad(x,z){const y=H(x,z)+.02,r=15;bxr(x-r,y-.3,z-r,x+r,y+.12,z+r,
 function marsHab(x,z){const hb=house(x,z,16,12,{floors:2,fh:3.2,door:'s',roof:'flat',roofAccess:true});const y=H(x+9.5,z)+.2;bx(x+12,y,z,9,2.6,2.4,0xdfe3e6,{kind:'metal'});bx(x+12,y+2.6,z,9,.3,2.4,0xaab1b8,{nocol:true});
   boxGeo(L.GL,x+8,y+1.2,z-1.25,x+16,y+1.9,z-1.19,_c.setRGB(1,.95,.85));boxGeo(L.GL,x+8,y+1.2,z+1.19,x+16,y+1.9,z+1.25,_c.setRGB(1,.95,.85));return hb}
 function radarArray(x,z){for(let i=0;i<3;i++){const px=x+(i-1)*9,pz=z+(i%2)*4,y=H(px,pz);bx(px,y,pz,.5,9+i*2,.5,0xc9ced4,{kind:'metal'});bx(px,y+9+i*2,pz,4.2,.2,4.2,0xe9ecef,{nocol:true});bx(px,y+9.2+i*2,pz,.4,1.6,.4,0xe4572e,{nocol:true})}}
+function footprintFree(x,z,w,d){const hs=[];for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){const px=x+a*(w/2+2),pz=z+b*(d/2+2),h=H(px,pz);if(blocked(px,pz,h,.7))return false;hs.push(h)}return Math.max(...hs)-Math.min(...hs)<2.4}
+function marsDistrict(id){const def=L.def,idx=['basin','village','harbour','pass','olympus','valles'].indexOf(id),R=rng(9001+idx*131),no=def.trees&&def.trees.no||(()=>false),wl=def.water===null?-99:def.water;
+  const N=[16,14,14,12,18,16][idx<0?0:idx],keep=[...(def.posts||[]).map(p=>[p[0],p[1]]),...(def.groups||[]).flatMap(g=>(g.path||[]).map(p=>[p[0],p[1]]))];let k=0,placed=0;
+  for(let tries=0;tries<400&&placed<N;tries++){const w=6+Math.floor(R()*7)*(R()<.3?3:1.4),d=6+Math.floor(R()*6)*(R()<.3?2.6:1.3),x=(R()-.5)*1100,z=(R()-.5)*1100;
+    if(Math.abs(x)>620||Math.abs(z)>620||Hmin(x,z)<wl+1.5)continue;
+    if(no(x,z)||no(x+w,z)||no(x-w,z)||no(x,z+d)||no(x,z-d))continue;
+    if(Math.hypot(x-def.start[0],z-def.start[1])<90||Math.hypot(x-def.exfil[0],z-def.exfil[1])<60||roadDist(x,z)<Math.max(w,d)/2+5)continue;
+    if(keep.some(q=>Math.hypot(q[0]-x,q[1]-z)<Math.max(w,d)/2+14))continue;
+    if(!footprintFree(x,z,w,d))continue;
+    const fl=R()<.45?1:R()<.6?2:R()<.7?3:4,door=Math.abs(x)>Math.abs(z)?(x>0?'w':'e'):(z>0?'n':'s'),mt=(k*7+idx*3)%20;k++;
+    house(x,z,w,d,{floors:fl,fh:3.2,door,mtype:mt,roofAccess:false});placed++}}
+const Hmin=(x,z)=>H(x,z);
 function marsExtras(id){const R=rng(777+id.length*13),spots=id==='olympus'?[[-235,150],[245,165],[-255,-60],[262,-40],[0,205],[-125,235],[135,245],[-60,-215]]:[[-245,185],[255,165],[-262,-120],[272,-80],[125,235],[-155,245],[10,-205],[190,-190]];let k=0;
   for(const[sx,sz]of spots){let ok=null;for(let t=0;t<30&&!ok;t++){const x=sx+(R()-.5)*70,z=sz+(R()-.5)*70;if(Math.abs(x)<690&&Math.abs(z)<690&&marsFree(x,z,16))ok=[x,z]}if(!ok)continue;
     const kind=k++%4;if(kind===0)solarField(ok[0],ok[1],3,7);else if(kind===1)landingPad(ok[0],ok[1]);else if(kind===2)marsHab(ok[0],ok[1]);else radarArray(ok[0],ok[1])}}
@@ -1078,7 +1127,7 @@ function buildLevel(id,ov){
   if(def.water!==null){const w=new THREE.Mesh(new THREE.PlaneGeometry(3200,3200),waterMat);w.rotation.x=-Math.PI/2;w.position.y=def.water;L.g.add(w)}
   {const N1=TN+1,dd=new Uint8Array(N1*N1*4),w0=def.water===null?0:def.water;for(let i=0;i<N1*N1;i++){const v=clamp((w0-HF[i]+6)/14,0,1)*255;dd[i*4]=dd[i*4+1]=dd[i*4+2]=v;dd[i*4+3]=255}
    const ht=new THREE.DataTexture(dd,N1,N1,THREE.RGBAFormat);ht.magFilter=ht.minFilter=THREE.LinearFilter;ht.generateMipmaps=false;ht.needsUpdate=true;if(waterMat.uniforms.hmap.value)waterMat.uniforms.hmap.value.dispose();waterMat.uniforms.hmap.value=ht}
-  def.build();for(const q of L.emit)addEmitter(q[0],q[1],q[2],{rate:.55,size:.9,col:0xb7b2aa});
+  def.build();marsDistrict(id);for(const q of L.emit)addEmitter(q[0],q[1],q[2],{rate:.55,size:.9,col:0xb7b2aa});
   const rv=rng(42),Tr=def.trees,o=new THREE.Object3D(),c=new THREE.Color();
   // boulders: hard cover
   {const N_=70,bm=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),lam(0x76726b),N_);let k=0;
