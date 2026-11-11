@@ -1748,8 +1748,9 @@ function canSeePoint(o,x,y,z,rng){
   const dx=x-o.pos.x,dz=z-o.pos.z,d=Math.hypot(dx,dz);if(d>(rng||o.sight)*G_.vis*DIF.sight)return false;
   if(d>1.5){const cosA=(-Math.sin(o.yaw)*dx-Math.cos(o.yaw)*dz)/d;if(cosA<Math.cos((o.fov||1.9)/2))return false}
   _eye.set(o.pos.x,o.pos.y+(o.prone?.35:1.6*Math.max(o.hs,.45)),o.pos.z);_t.set(x,y,z);return losClear(_eye,_t)}
+let UNIT_N=0;const unitName=pre=>pre+'-'+String(1000+((++UNIT_N)*7919+Math.floor(Math.random()*400))%9000);
 function spawnEnemy(def,isT,i){
-  const e={isTarget:isT,officer:!!def.officer,key:def.key,sniper:!!def.sniper,civ:!!def.civ,hold:!!def.hold,name:def.name||(def.sniper?'Counter-sniper':def.civ?'Service unit':'Sentry'),state:'patrol',path:null,pi:0,wait:1+Math.random()*4,det:0,los:false,losT:Math.random()*.25,fall:0,hp:100,fireT:1+Math.random()*2,
+  const e={isTarget:isT,officer:!!def.officer,key:def.key,sniper:!!def.sniper,civ:!!def.civ,hold:!!def.hold,name:def.name||unitName(def.sniper?'SNP':def.civ?'SVC':'SNT'),state:'patrol',path:null,pi:0,wait:1+Math.random()*4,det:0,los:false,losT:Math.random()*.25,fall:0,hp:100,fireT:1+Math.random()*2,
     sK:0,stk:0,tagged:false,tagTm:0,phase:Math.random()*6,yaw:def.post&&def.post[3]!==undefined?def.post[3]:Math.random()*6,pos:new V,fixed:false,look:new V,susT:0,scan:Math.random()*6,hs:1,aim:0,ax:0,az:0,inv:false,found:false,walk:0,lk:new V,lkT:-99,cm:null,cv:null,sup:0,peeks:0,spd:0,aimT:0,prone:false,hid:!!def.hid,wp:null,wi:0,alertAt:0,decT:0};
   let p;if(def.post){e.fixed=true;p=def.post}else{e.path=def.path;e.pi=i%def.path.length;p=def.path[e.pi]}
   e.pos.set(p[0],groundAt(p[0],p[1],(p[2]===undefined?H(p[0],p[1]):p[2])+.3),p[1]);
@@ -1976,7 +1977,7 @@ function placeHiddenSnipers(n){
     if(cand.length>=n)break}
   cand.sort((a,b)=>b.s-a.s);const pick=[];for(const c of cand){if(pick.every(p=>Math.hypot(p.x-c.x,p.z-c.z)>110))pick.push(c);if(pick.length>=n+3)break}
   G_.nests=pick.slice(0,n+3);
-  for(let i=0;i<Math.min(n,pick.length);i++){const p=pick[i],e=spawnEnemy({post:[p.x,p.z,p.y],hid:true,sniper:true},false,0);e.prone=true;e.hs=.28;e.fixed=true;e.name='Hidden sniper unit';e.yaw=Math.atan2(-(cx-p.x),-(cz-p.z));enemies.push(e)}
+  for(let i=0;i<Math.min(n,pick.length);i++){const p=pick[i],e=spawnEnemy({post:[p.x,p.z,p.y],hid:true,sniper:true},false,0);e.prone=true;e.hs=.28;e.fixed=true;e.name=unitName('SNP')+'H';e.yaw=Math.atan2(-(cx-p.x),-(cz-p.z));enemies.push(e)}
 }
 
 function enemyShoot(e,d,p,dmg,big){
@@ -2027,53 +2028,53 @@ const BG={yard:{path:[[-5,-25],[10,-25],[10,-10],[-5,-10]]},hall:{path:[[-40,-28
 const VG={sq:{path:[[-12,-12],[12,-12],[12,12],[-12,12]]},west:{path:[[-36,-20],[-36,20]]},east:{path:[[37,-22],[37,22]]},br0:{post:[10,96,6.5,0]},br1:{path:[[10,102,6.5],[10,146,6.5]]},farm:{path:[[42,166],[82,166]]}};
 const HG={quay:{path:[[-60,-20],[10,-20]]},yardN:{path:[[30,-27],[100,-27]]},yardS:{path:[[27,5],[100,5]]},ware:{path:[[-76,-6],[-76,40]]},pier:{path:[[-40,-50,2.3],[-40,-84,2.3]]},office:{post:[121,-8]},gate:{post:[0,52,undefined,3.1]}};
 const CONTRACTS=[
- {hs:1,id:'ledger',level:'basin',name:'Ledger',who:'Anton Rusk, quartermaster',pay:4000,sky:'dawn',wind:[2.2,1.9],
-  brief:'Three officers in red berets work the yard and only one of them is Rusk. Put the scope on each until you have a name, then close his account. His ledger is in the motor shed on the west side if you want the bonus; a gully west of your ridge gets you close unseen.',
+ {hs:1,id:'ledger',level:'basin',name:'Ledger',who:'QM-117, quartermaster',pay:4000,sky:'dawn',wind:[2.2,1.9],
+  brief:'Three officers in red chassis work the yard and only one of them is QM-117. Put the scope on each until you have a designation, then close his account. His ledger is in the motor shed on the west side if you want the bonus; a gully west of your ridge gets you close unseen.',
   facts:['Identify before you shoot','Ridge to yard 330 m','Wind 2 m/s'],
-  spawn:R=>({targets:[{name:'Anton Rusk',path:[[-4,-30],[12,-36],[12,-20],[-4,-18]]}],
+  spawn:R=>({targets:[{name:'QM-117',path:[[-4,-30],[12,-36],[12,-20],[-4,-18]]}],
    guards:[BG.yard,BG.hall,BG.ware,BG.shed,BG.south,{post:[-48,-70,R.t0]},{post:[50,30,R.t1]},{path:[[-25,-43,R.hq.top],[-10,-37,R.hq.top]],hold:true},
-    {name:'Officer Dahl',officer:true,path:[[36,-28],[42,-40],[46,-24]]},{name:'Officer Wren',officer:true,path:[[-46,-20],[-46,-58]]},{post:[168,-57]}]}),
+    {name:'CMD-204',officer:true,path:[[36,-28],[42,-40],[46,-24]]},{name:'CMD-318',officer:true,path:[[-46,-20],[-46,-58]]},{post:[168,-57]}]}),
   setup(M){M.add({id:'ledger',type:'reach',pos:[-31,5,H(-31,5)+.4],text:'Take the ledger from the motor shed',opt:true,pay:2500})},
-  bounties:[{id:'head',text:'Head hit on Rusk',pay:1200},{id:'officers',text:'Both other officers left intact',pay:1000},{id:'ghost',text:'No alarm raised',pay:1500}]},
- {hs:2,id:'deadair',level:'basin',name:'Dead Air',who:'Mara Lenz, signals officer',pay:7500,sky:'storm',wind:[6.2,4.4],mask:{kind:'thunder',label:'THUNDER',every:[14,26],dur:4.5},
-  brief:'Three jobs under one storm. Break the orange junction box on the relay mast first: if Lenz dies while it still works she gets a call out and a truck of reinforcements is four seconds away. Then Lenz. Then the dish at the listening post on the east knoll, which you cannot see from the south ridge. Thunder covers a shot.',
+  bounties:[{id:'head',text:'Head hit on QM-117',pay:1200},{id:'officers',text:'Both other officers left intact',pay:1000},{id:'ghost',text:'No alarm raised',pay:1500}]},
+ {hs:2,id:'deadair',level:'basin',name:'Dead Air',who:'SIG-442, signals officer',pay:7500,sky:'storm',wind:[6.2,4.4],mask:{kind:'thunder',label:'THUNDER',every:[14,26],dur:4.5},
+  brief:'Three jobs under one storm. Break the orange junction box on the relay mast first: if SIG-442 dies while it still works she gets a call out and a truck of reinforcements is four seconds away. Then SIG-442. Then the dish at the listening post on the east knoll, which you cannot see from the south ridge. Thunder covers a shot.',
   facts:['Order matters','Second site on the east knoll','Thunder covers shots'],
-  spawn:R=>({targets:[{name:'Mara Lenz',path:[[2,-68],[12,-70],[10,-58],[0,-60]]}],
+  spawn:R=>({targets:[{name:'SIG-442',path:[[2,-68],[12,-70],[10,-58],[0,-60]]}],
    guards:[BG.yard,BG.hall,BG.ware,BG.shed,BG.mast,BG.south,BG.north,{post:[-48,-70,R.t0]},{post:[50,30,R.t1]},{path:[[-25,-43,R.hq.top],[-10,-37,R.hq.top]],hold:true},
     {post:[167,-56],sniper:true},{path:[[164,-50],[178,-50]]}]}),
   setup(M){M.add({id:'relay',type:'destroy',box:L.relay,text:'Destroy the relay junction box'},true);M.add({id:'dish',type:'destroy',box:M.R.dish,text:'Destroy the dish on the east knoll'})},
-  on(M,ev,a){if(ev==='kill'&&a===M.E['Mara Lenz']&&L.relay.alive&&!G_.alarm){raiseAlarm('Lenz got a call out');G_.reinf=4}},
-  bounties:[{id:'range',n:350,text:'Destroy Lenz from 350 m or more',pay:1500},{id:'clean',text:'Leave every guard unit intact',pay:2000}]},
- {hs:2,id:'vespers',level:'village',name:'Vespers',who:'Osric Hale, broker',pay:9000,sky:'dusk',wind:[3.6,5.2],mask:{kind:'bell',label:'CHURCH BELL',every:[30,44],dur:7.5},
-  brief:'Hale arrives by car down the north road, collects in the square between the church, the well and the inn, and is driven out again a little over two minutes later. Disable the car and he is stuck. The houses hide the square from the south hill: the castle keep on the western crag and the farm by the bridge both see more. The square is full of service units that are not him.',
+  on(M,ev,a){if(ev==='kill'&&a===M.E['SIG-442']&&L.relay.alive&&!G_.alarm){raiseAlarm('SIG-442 got a call out');G_.reinf=4}},
+  bounties:[{id:'range',n:350,text:'Destroy SIG-442 from 350 m or more',pay:1500},{id:'clean',text:'Leave every guard unit intact',pay:2000}]},
+ {hs:2,id:'vespers',level:'village',name:'Vespers',who:'BRK-709, broker',pay:9000,sky:'dusk',wind:[3.6,5.2],mask:{kind:'bell',label:'CHURCH BELL',every:[30,44],dur:7.5},
+  brief:'BRK-709 arrives by car down the north road, collects in the square between the church, the well and the inn, and is driven out again a little over two minutes later. Disable the car and he is stuck. The houses hide the square from the south hill: the castle keep on the western crag and the farm by the bridge both see more. The square is full of service units that are not him.',
   facts:['Target arrives and leaves by car','Service units in the square','Bell covers shots'],
-  spawn:R=>({targets:[{name:'Osric Hale',gone:true,path:[[0,-28],[3,6],[19,-10]]}],
+  spawn:R=>({targets:[{name:'BRK-709',gone:true,path:[[0,-28],[3,6],[19,-10]]}],
    guards:[VG.sq,VG.west,VG.east,VG.br0,VG.br1,VG.farm,{post:[2.5,-31,undefined,3.1]},{path:[[14,-60],[40,-100]]},{post:[-9,-33,R.bell.fy(4)],sniper:true},{path:[[24,-12,R.inn.fy(1)],[28,-7,R.inn.fy(1)]],hold:true},{path:[[-150,-58],[-144,-66]]}],
    civs:[{path:[[-8,6],[8,7]]},{path:[[-20,18],[-14,20],[0,17]]},{path:[[18,-2],[20,16]]},{path:[[-6,-20],[6,-20],[2,-14]]},{path:[[50,178],[66,176]]}]}),
-  setup(M){const v=M.V.car=makeVehicle({pts:[[60,-270],[60,-130],[14,-60],[3,-18]],speed:10,hp:4});v.wait=20;M.E['Osric Hale'].car=v;
+  setup(M){const v=M.V.car=makeVehicle({pts:[[60,-270],[60,-130],[14,-60],[3,-18]],speed:10,hp:4});v.wait=20;M.E['BRK-709'].car=v;
    M.add({id:'car',type:'destroy',veh:v,text:'Disable his car',opt:true,pay:1500});const k=M.obj('k0');k.tl='leaves in ';k.timer=()=>M.f.leave&&!v.dead?Math.max(0,M.f.leave-M.t):null},
-  tick(M,dt){const v=M.V.car,h=M.E['Osric Hale'];if(v.wait>0){v.wait-=dt;if(v.wait<=0){v.moving=true;toast('A car is coming down the north road')}}
+  tick(M,dt){const v=M.V.car,h=M.E['BRK-709'];if(v.wait>0){v.wait-=dt;if(v.wait<=0){v.moving=true;toast('A car is coming down the north road')}}
    if(M.f.leave&&M.t>M.f.leave&&(h.state==='patrol'||h.state==='suspect'))h.state='tocar'},
-  on(M,ev,a){const h=M.E['Osric Hale'];
-   if(ev==='varrive'&&!M.f.leave){M.f.leave=M.t+135;h.state='patrol';h.g.visible=true;h.pos.set(6,H(6,-17),-17);h.pi=0;h.wait=2;toast('Hale is in the square')}
-   if(ev==='vleft')finish(false,'Hale was driven out of Sankt Varga.');
+  on(M,ev,a){const h=M.E['BRK-709'];
+   if(ev==='varrive'&&!M.f.leave){M.f.leave=M.t+135;h.state='patrol';h.g.visible=true;h.pos.set(6,H(6,-17),-17);h.pi=0;h.wait=2;toast('BRK-709 is in the square')}
+   if(ev==='vleft')finish(false,'BRK-709 was driven out of Sankt Varga.');
    if(ev==='kill'&&a===h)M.add({id:'case',type:'reach',pos:[h.pos.x,h.pos.z,h.pos.y+.4],text:'Recover his briefcase',opt:true,pay:3000})},
   bounties:[{id:'noCiv',text:'No service unit harmed',pay:2000},{id:'ghost',text:'No alarm raised',pay:2000}]},
- {hs:2,id:'housecall',level:'village',name:'House Call',who:'Irena Voss, financier',pay:12000,sky:'night',wind:[2.4,.8],mask:{kind:'bell',label:'CHURCH BELL',every:[40,55],dur:7.5},
-  brief:'Voss works upstairs in the manor north of the church, behind glass. Shoot the generator behind the church and the village goes dark: she steps onto the south balcony to see what happened and the guards see far less. When she is down, go in and take her ledgers from the ground-floor study. That means the guarded bridge, at night.',
+ {hs:2,id:'housecall',level:'village',name:'House Call',who:'FIN-831, financier',pay:12000,sky:'night',wind:[2.4,.8],mask:{kind:'bell',label:'CHURCH BELL',every:[40,55],dur:7.5},
+  brief:'FIN-831 works upstairs in the manor north of the church, behind glass. Shoot the generator behind the church and the village goes dark: she steps onto the south balcony to see what happened and the guards see far less. When she is down, go in and take her ledgers from the ground-floor study. That means the guarded bridge, at night.',
   facts:['Destroy, then infiltrate','Generator behind the church','Counter-sniper in the belfry'],
-  spawn:R=>({targets:[{name:'Irena Voss',path:[[27,-83,R.manor.fy(1)],[34,-80,R.manor.fy(1)],[30,-79,R.manor.fy(1)]],hold:true}],
+  spawn:R=>({targets:[{name:'FIN-831',path:[[27,-83,R.manor.fy(1)],[34,-80,R.manor.fy(1)],[30,-79,R.manor.fy(1)]],hold:true}],
    guards:[VG.sq,VG.br0,VG.br1,VG.east,VG.farm,{path:[[18,-68],[42,-68]]},{path:[[20,-90],[40,-90]]},{path:[[10,-56],[16,-62]]},
     {key:'belfry',post:[-9,-33,R.bell.fy(4)],sniper:true},{path:[[27,-84,R.manor.fy(0)],[32,-80,R.manor.fy(0)]],hold:true},{post:[-158,-68,R.keep.top]}],
    civs:[{path:[[-8,6],[8,7]]}]}),
   setup(M){M.add({id:'safe',type:'reach',pos:[34,-84.5,M.R.manor.fy(0)+.4],lock:'k0',text:'Take the ledgers from the manor study'});
    M.add({id:'snipe',type:'kill',e:M.E.belfry,text:'Remove the counter-sniper in the belfry',opt:true,pay:1500})},
-  on(M,ev){if(ev==='power'){const v=M.E['Irena Voss'];if(v.state!=='dead'){const y=M.R.manor.fy(1);v.path=[[30,-78.6,y],[30,-76.2,y]];v.pi=1;v.wait=0;feed('Lights out · someone steps onto the manor balcony')}}},
-  bounties:[{id:'power',text:'Destroy Voss with the power cut',pay:2500},{id:'range',n:250,text:'Destroy Voss from 250 m or more',pay:2000}]},
- {hs:2,id:'drydock',level:'harbour',name:'Dry Dock',who:'Captain Stenn and foreman Rask',pay:13000,sky:'fog',wind:[4.8,2.4],mask:{kind:'horn',label:'SHIP HORN',every:[34,50],dur:4.2},
+  on(M,ev){if(ev==='power'){const v=M.E['FIN-831'];if(v.state!=='dead'){const y=M.R.manor.fy(1);v.path=[[30,-78.6,y],[30,-76.2,y]];v.pi=1;v.wait=0;feed('Lights out · someone steps onto the manor balcony')}}},
+  bounties:[{id:'power',text:'Destroy FIN-831 with the power cut',pay:2500},{id:'range',n:250,text:'Destroy FIN-831 from 250 m or more',pay:2000}]},
+ {hs:2,id:'drydock',level:'harbour',name:'Dry Dock',who:'CPT-056 and foreman FRM-613',pay:13000,sky:'fog',wind:[4.8,2.4],mask:{kind:'horn',label:'SHIP HORN',every:[34,50],dur:4.2},
   brief:'The freighter must not sail and must not call for help. Break the orange radio box on its mast and the fuel pump beside the tanks, then remove the captain on the bridge and the foreman in the container aisles. The fog hides you and them alike. The manifest in the harbour office pays extra if you can walk in and photograph it.',
   facts:['Four objectives','Fog: 500 m visibility','Horn covers shots'],
-  spawn:R=>({targets:[{name:'Captain Stenn',path:[[-29,-110,R.ss.fy(1)],[-25,-105,R.ss.fy(1)]],hold:true},{name:'Foreman Rask',path:[[27,5],[100,5],[104,-15],[27,-15]]}],
+  spawn:R=>({targets:[{name:'CPT-056',path:[[-29,-110,R.ss.fy(1)],[-25,-105,R.ss.fy(1)]],hold:true},{name:'FRM-613',path:[[27,5],[100,5],[104,-15],[27,-15]]}],
    guards:[HG.quay,HG.yardN,HG.ware,{path:[[-40,-50,2.3],[-40,-112,2.3]]},{path:[[-31,-64,4.3],[-24,-64,4.3],[-24,-72,4.3]],hold:true},HG.office,HG.gate,
     {post:[-150,40,R.t0]},{post:[150,40,R.t1]},{post:[23,-38.8,22.6],sniper:true},{path:[[110,10],[110,40]]},{path:[[-128,-24],[-112,-24]]},{post:[146,150]}]}),
   setup(M){M.add({id:'radio',type:'destroy',box:M.R.shipRadio,text:"Destroy the freighter's radio box"},true);M.add({id:'pump',type:'destroy',box:M.R.pump,text:'Destroy the fuel pump by the tanks'},true);
@@ -2082,7 +2083,7 @@ const CONTRACTS=[
  {hs:3,id:'lantern',level:'harbour',name:'Lantern',who:'Three Draugen lieutenants',pay:16000,sky:'night',wind:[5.4,5.6],mask:{kind:'horn',label:'SHIP HORN',every:[40,60],dur:4.2},
   brief:'The company is loading out by night. Three lieutenants: one in the harbour office, one on the pier, one by the fuel tanks. A weapons truck is parked at the warehouse and rolls for the east road two and a half minutes after you arrive; it must not leave. Counter-snipers hold the crane and the lighthouse gallery, and the radar station on the hill east of you is manned.',
   facts:['Truck on a timer','Two counter-snipers','Radar station near your position'],
-  spawn:R=>({targets:[{name:'Lt. Varn',path:[[126,-10,R.office.fy(2)],[130,-6,R.office.fy(2)]],hold:true},{name:'Lt. Oksa',path:[[-40,-114,2.3],[-40,-92,2.3]]},{name:'Lt. Brandt',path:[[-134,-2],[-118,-2]]}],
+  spawn:R=>({targets:[{name:'LT-4410',path:[[126,-10,R.office.fy(2)],[130,-6,R.office.fy(2)]],hold:true},{name:'LT-5521',path:[[-40,-114,2.3],[-40,-92,2.3]]},{name:'LT-6632',path:[[-134,-2],[-118,-2]]}],
    guards:[HG.quay,HG.yardN,HG.yardS,HG.ware,HG.pier,HG.office,HG.gate,{post:[-150,40,R.t0]},
     {post:[23,-38.8,22.6],sniper:true},{post:[187.2,-70,R.ly],sniper:true},{path:[[126,-10,R.office.fy(0)],[130,-6,R.office.fy(0)]],hold:true},{post:[146,150]},{post:[161,146,R.t2]}]}),
   setup(M){const v=M.V.truck=makeVehicle({pts:[[-70,14],[-70,48],[150,48],[255,135]],speed:7,hp:5,truck:true,explosive:true});M.f.go=150;
@@ -2091,27 +2092,27 @@ const CONTRACTS=[
   tick(M){const v=M.V.truck;if(!v.moving&&!v.dead&&!v.arrived&&M.t>M.f.go){v.moving=true;toast('The weapons truck is rolling',true)}},
   on(M,ev,a){if(ev==='varrive'&&a===M.V.truck)finish(false,'The weapons truck left the harbour.')},
   bounties:[{id:'head',text:'Three head hits',pay:3500},{id:'ghost',text:'No alarm raised',pay:3000}]},
- {hs:2,id:'lastcar',level:'pass',name:'Last Carriage',who:'Dr. Halvard, arms broker',pay:13500,sky:'snow',wind:[4.5,.8],mask:{kind:'horn',label:'LOCOMOTIVE WHISTLE',every:[28,40],dur:3.5},
-  brief:'Halvard travels in the last carriage of the afternoon train and steps out onto the open rear platform whenever it stops. It stops once, at Altheim station, for 42 seconds. Then it goes into the tunnel and he is gone. A railway signal relay at the west end can be shot to keep the train in the station for 40 s longer. Snow is falling and the platform is guarded.',
+ {hs:2,id:'lastcar',level:'pass',name:'Last Carriage',who:'ARM-905, arms broker',pay:13500,sky:'snow',wind:[4.5,.8],mask:{kind:'horn',label:'LOCOMOTIVE WHISTLE',every:[28,40],dur:3.5},
+  brief:'ARM-905 travels in the last carriage of the afternoon train and steps out onto the open rear platform whenever it stops. It stops once, at Altheim station, for 42 seconds. Then it goes into the tunnel and he is gone. A railway signal relay at the west end can be shot to keep the train in the station for 40 s longer. Snow is falling and the platform is guarded.',
   facts:['Moving train, one stop','42 s window','Signal relay extends it'],
-  spawn:R=>({targets:[{name:'Dr. Halvard',post:[120,-40,PASS_TY+1,Math.PI/2]}],
+  spawn:R=>({targets:[{name:'ARM-905',post:[120,-40,PASS_TY+1,Math.PI/2]}],
    guards:[{path:[[92,-35,PASS_TY+.9],[160,-35,PASS_TY+.9]]},{path:[[40,-60],[80,-60]]},{path:[[0,-100],[40,-110]]},{post:[150,-14,R.tower1],sniper:true},{path:[[30,90],[80,100]]},{post:[122,-24,R.hall.top],hold:true}],
    civs:[{path:[[96,-31,PASS_TY+.9],[112,-31,PASS_TY+.9]]},{path:[[40,110],[60,120]]}]}),
-  setup(M){const T=makeTrain();M.T=T;const e=M.E['Dr. Halvard'];e.rideCar=T.cars[3];e.fixed=true;e.yaw=Math.PI/2;const k=M.obj('k0');k.tl='arrives in ';k.timer=()=>T.phase==='gone'||T.phase==='depart'?null:T.phase==='wait'?Math.max(0,T.start-T.t):Math.max(0,T.dw);
+  setup(M){const T=makeTrain();M.T=T;const e=M.E['ARM-905'];e.rideCar=T.cars[3];e.fixed=true;e.yaw=Math.PI/2;const k=M.obj('k0');k.tl='arrives in ';k.timer=()=>T.phase==='gone'||T.phase==='depart'?null:T.phase==='wait'?Math.max(0,T.start-T.t):Math.max(0,T.dw);
    M.add({id:'signal',type:'destroy',box:M.R.signal,opt:true,pay:1500,text:'Shoot the signal relay: the train waits 40 s longer'})},
   tick(M){const T=M.T,k=M.obj('k0');if(k)k.tl=T.phase==='wait'?'arrives in ':'leaves in '},
   on(M,ev,a){if(ev==='destroy'&&a===M.R.signal){M.T.extend(40);feed('Signal blocked · the train will wait longer')}
-   if(ev==='trainGone'){const e=M.E['Dr. Halvard'];if(e.state!=='dead')finish(false,'The train left Altheim with Dr. Halvard aboard.')}},
-  bounties:[{id:'head',text:'Head hit on Halvard',pay:1500},{id:'ghost',text:'No alarm raised',pay:2500}]},
- {hs:3,id:'cloister',level:'pass',name:'Cloister',who:'Brother Kasimir, abbot-warlord',pay:17000,sky:'snownight',wind:[7.2,2.4],mask:{kind:'bell',label:'MONASTERY BELL',every:[36,52],dur:7.5},
-  brief:'A blizzard night. Kasimir holds the monastery above the valley with a garrison and a cable car that brings reinforcements from the valley station within a minute of any alarm. Cut the winch on the upper station and no help arrives. Then remove Kasimir, who walks the cloister yard. Three marksmen are hidden in the snow around the approaches. The bell covers a shot.',
+   if(ev==='trainGone'){const e=M.E['ARM-905'];if(e.state!=='dead')finish(false,'The train left Altheim with ARM-905 aboard.')}},
+  bounties:[{id:'head',text:'Head hit on ARM-905',pay:1500},{id:'ghost',text:'No alarm raised',pay:2500}]},
+ {hs:3,id:'cloister',level:'pass',name:'Cloister',who:'ABT-777, abbot-warlord',pay:17000,sky:'snownight',wind:[7.2,2.4],mask:{kind:'bell',label:'MONASTERY BELL',every:[36,52],dur:7.5},
+  brief:'A blizzard night. ABT-777 holds the monastery above the valley with a garrison and a cable car that brings reinforcements from the valley station within a minute of any alarm. Cut the winch on the upper station and no help arrives. Then remove ABT-777, who walks the cloister yard. Three marksmen are hidden in the snow around the approaches. The bell covers a shot.',
   facts:['Blizzard, 55% visibility','Cable car brings reinforcements','Three hidden snipers'],
-  spawn:R=>({targets:[{name:'Brother Kasimir',path:[[-186,-122],[-160,-104],[-150,-120],[-176,-142]]}],
+  spawn:R=>({targets:[{name:'ABT-777',path:[[-186,-122],[-160,-104],[-150,-120],[-176,-142]]}],
    guards:[{path:[[-190,-100],[-150,-100]]},{path:[[-196,-146],[-140,-146]]},{path:[[-140,-110],[-140,-135]]},{post:[-186,-112,R.bell.fy(4)],sniper:true},{post:[-126,-90,R.upper.top],hold:true},{path:[[-100,-104],[-80,-92]]},{path:[[-178,-135],[-160,-132]],hold:true},{post:[-158,-134,R.dorm.fy(1)]},{post:[-146,-108,R.dorm2.fy(1)]},{path:[[-110,-70],[-70,-72]]}],
    civs:[]}),
   setup(M){M.add({id:'winch',type:'destroy',box:M.R.winch,text:'Destroy the cable car winch'},true);M.add({id:'relic',type:'reach',pos:[-170,-122,M.R.church.fy(0)+.4],opt:true,pay:3500,text:'Take the relic from the church'})},
   on(M,ev,a){if(ev==='destroy'&&a===M.R.winch){L.cable.alive=false;feed('The cable car is stuck · no reinforcements from the valley')}},
-  bounties:[{id:'head',text:'Head hit on Kasimir',pay:2000},{id:'ghost',text:'No alarm raised',pay:3500}]},
+  bounties:[{id:'head',text:'Head hit on ABT-777',pay:2000},{id:'ghost',text:'No alarm raised',pay:3500}]},
 ];
 const UPGRADES=[
  {id:'supp',name:'Suppressor',desc:'Shots carry 70 m instead of across the valley.',cost:4000},
@@ -2355,7 +2356,7 @@ function startContract(i){
   Object.assign(P,{yaw:0,pitch:-.08,stance:0,eye:1.7,scoped:false,zoom:6,zi:4,mag:5,pool:{std:35,ap:5*x2,lure:3*x2},type:0,med:save.up.pouch?3:2,bolt:0,reload:0,hp:100,hurtT:0,breath:1,gasp:0,recoil:0,x:st[0],z:st[1],fy:H(st[0],st[1]),vy:0,air:false,bpm:62,map:false,hold:false,veh:null,drOff:0});$('drive').hidden=true;
   const M={t:0,f:{},E,V:{},R:L.ref,obj:id=>G_.objs.find(o=>o.id===id),add:addObj};
   G_={state:'setup',c,ci:i,nT:S.targets.length,alarm:false,heat:0,clock:0,stats:{tk:[],gk:0,ck:0,ok:0,shots:0},objs:[],exfil:false,bullets:[],cine:null,wt:Math.random()*50,vis:SKIES[c.sky].vis,bonus:0,reinf:-1,mask:0,maskT:c.mask?10+Math.random()*10:1e9,flash:0,M};
-  S.targets.forEach((t,k)=>addObj({id:'k'+k,type:'kill',e:enemies[k],text:(c.id==='ledger'||c.id==='blackout'?'Identify and eliminate ':'Eliminate ')+t.name}));
+  S.targets.forEach((t,k)=>addObj({id:'k'+k,type:'kill',e:enemies[k],text:(c.id==='ledger'||c.id==='blackout'?'Identify and destroy ':'Destroy ')+t.name}));
   if(c.setup)c.setup(M);for(const p of L.def.posts||[])enemies.push(spawnEnemy({post:p},false,0));(L.def.groups||[]).forEach((g,k)=>enemies.push(spawnEnemy(g,false,k)));spawnVehicles();placeHiddenSnipers(Math.max(0,(c.hs===undefined?1:c.hs)+DIF.sn));navQ.length=0;G_.state='play';
   L.beacon.visible=false;activeCam=camera;gunModel.visible=true;
   $('menu').hidden=true;$('result').hidden=true;$('pause').hidden=true;$('hud').hidden=false;$('scope').hidden=true;$('bars').hidden=true;$('tmap').hidden=true;$('mask').hidden=true;$('hud').classList.remove('cine');
