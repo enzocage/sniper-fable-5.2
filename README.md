@@ -19,12 +19,13 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | Taste | Aktion |
 | --- | --- |
 | `W A S D` | Bewegen, `Shift` sprintet (an Leitern: `W` hoch, `S` runter) |
-| Rechtsklick / `F` | Zielfernrohr, Mausrad ändert die Vergrößerung |
+| Rechtsklick / `F` | Zielfernrohr, Mausrad ändert die Vergrößerung (4× bis 20×, mit Optik bis 32×) |
 | `Shift` (im Zielfernrohr) | Luft anhalten: ruhiger zielen, Zeit läuft langsamer |
 | `Q` / `E` | Absehen-Einstellung (Nullpunkt) in 50-m-Schritten |
 | `1` `2` `3` | Standard-, panzerbrechende, Lockmunition |
 | `C` `X` `Leertaste` | Hocken, Liegen, Aufstehen |
 | Linksklick / `R` | Schießen / Nachladen |
+| `L` | Scheinwerfer des Jeeps (standardmäßig aus; im Dunkeln oder Nebel ist der Jeep ohne Licht kaum zu sehen) |
 | `G` | Jeep einsteigen / aussteigen (Fahren: `W A S D`, `Leertaste` bremst, `Shift` Boost) |
 | `Tab` / `M` | Übersichtskarte (zoombar, mit Namen, Schussplätzen und Routen) |
 | `B` | Verbandspäckchen |
@@ -50,7 +51,9 @@ Wird automatisch erkannt. Fast unsichtbar: Tasten sind nur schwach eingeblendet.
 * **Gegner-KI:** Gegner suchen Deckung, rücken von Deckung zu Deckung vor, lugen aus der Deckung, flankieren, funken sich Hinweise zu (Reichweite sinkt, wenn das Relais zerstört ist) und durchsuchen die letzte bekannte Position. Beim Aufspüren einer Leiche oder eines Schusses verstecken sich Wachen, statt zu stürmen.
 * **Versteckte Scharfschützen:** getarnte Schützen liegen im Gelände. Ein Schuss von ihnen erscheint als roter Punkt auf dem Kompass; nach einem Schuss wechseln sie die Stellung.
 * **Fahrzeuge:** eigener Jeep (befahrbar, überfährt Gegner), Patrouillenfahrzeuge der Gegner, die bei Alarm absitzen, und ein Verstärkungs-Lkw nach einem Sirenenalarm.
-* **Figuren:** Jede Person ist ein Skinned Mesh mit 15 Knochen und zufälligem Aussehen (Helm, Mütze, Weste, Rucksack, Brille, Mantel, Ghillie). Arme und Beine nutzen Zwei-Knochen-IK: Hände folgen den Waffengriffen, Schritte folgen der gelaufenen Strecke. Wachen schlendern mit wechselndem Tempo, rauchen, funken, strecken sich, unterhalten sich zu zweit und blicken sich um; Zivilisten fliehen oder kauern.
+* **Roboter:** Außer dir ist niemand ein Mensch. Wachen, Offiziere, Scharfschützen und unbewaffnete Servicerobotern sind humanoide Maschinen (Trooper, Scout, Heavy, Kommandoeinheit, Tarn-Scharfschütze). Metallische Panzerung mit Umgebungsreflexion, leuchtende Augen als Zustandsanzeige: Cyan/Grün ruhig, Amber misstrauisch, Rot im Kampf.
+* **Sichtfeld und Waffenreichweite:** Jede Einheit hat ein Sichtfeld, eine Sichtweite und eine Schussreichweite (Trooper 110°/115 m/135 m, Scout 130°/140 m/110 m, Heavy 90°/105 m/160 m, Scharfschützen 50°/420–480 m/520 m). Auf Abschüsse reagieren nur Einheiten, die sie sehen konnten (Sichtfeld, Reichweite, freie Sicht). Geschossen wird nur innerhalb der Waffenreichweite, außerhalb rücken die Einheiten vor. Auf der taktischen Karte zeigt ein Keil das Sichtfeld.
+* **Figuren (Technik):** Jede Person ist ein Skinned Mesh mit 15 Knochen und zufälligem Aussehen (Helm, Mütze, Weste, Rucksack, Brille, Mantel, Ghillie). Arme und Beine nutzen Zwei-Knochen-IK: Hände folgen den Waffengriffen, Schritte folgen der gelaufenen Strecke. Wachen schlendern mit wechselndem Tempo, rauchen, funken, strecken sich, unterhalten sich zu zweit und blicken sich um; Zivilisten fliehen oder kauern.
 * **Welt:** begehbare Häuser mit Treppen, Leitern, Balkonen und Dächern; Wasser, Wetter, Tag und Nacht.
 * **Ausrüstung:** Nach jedem Auftrag lassen sich Schalldämpfer, Zielfernrohr, Schaft und Munitionstasche kaufen. Der Spielstand liegt im `localStorage` des Browsers.
 
@@ -61,7 +64,9 @@ Wird automatisch erkannt. Fast unsichtbar: Tasten sind nur schwach eingeblendet.
 | Karvel Basin (Söldnerhof im Hochland) | Ledger, Dead Air |
 | Sankt Varga (Dorf am Fluss, Burgruine) | Vespers, House Call |
 | Grimsvik Harbour (Frachthafen, Klippen) | Dry Dock, Lantern |
-| Altheim Pass (Schnee, Bahnlinie, Kloster) | Last Carriage (fahrender Zug), Cloister (Schneesturm, Seilbahn) |
+| Altheim Pass (Schnee, Bahnlinie, Kloster) | Last Carriage (fahrender Zug), Cloister (Schneesturm, Seilbahn), Whiteout (Blizzard mit Nebel, unter 100 m Sicht) |
+
+Dazu fünf Nacht- und Winter-Varianten auf denselben Karten: Blackout (sternenlose Nacht, Karvel), Winter Bell (Schneetag, Sankt Varga), Pale Harbour (Winternebel, Grimsvik), Long Night (Nachtblizzard, Grimsvik) und Whiteout (Altheim). Alle 13 Aufträge haben Vorschaubilder auf dem Startbildschirm.
 
 ## Karte und Hilfe
 
@@ -69,7 +74,7 @@ Wird automatisch erkannt. Fast unsichtbar: Tasten sind nur schwach eingeblendet.
 
 ## Radio
 
-`O` öffnet einen kleinen Musikplayer (Wiedergabe, Vor/Zurück, Zufall, Suchleiste, Titelliste) mit den Spheric-Lounge-Tracks, die per Stream von enzocage.de geladen werden (Internet nötig). Falls der Stream blockiert ist (zum Beispiel in der Artefakt-Vorschau, die fremde Medien-Server sperrt), schaltet der Player automatisch auf einen eingebauten, generativen Ambient-Kanal um, der ohne Netz läuft. Zwei Regler stellen Musik- und FX-Lautstärke getrennt ein; beide werden gespeichert. Auf dem Handy öffnet die Taste ♪ oben in der Mitte den Player.
+`O` öffnet einen kleinen Musikplayer (Wiedergabe, Vor/Zurück, Zufall, Suchleiste, Titelliste) mit den Spheric-Lounge-Tracks, die per Stream von enzocage.de geladen werden (Internet nötig). Falls der Stream blockiert ist (zum Beispiel in der Artefakt-Vorschau, die fremde Medien-Server sperrt), schaltet der Player automatisch auf einen eingebauten, generativen Ambient-Kanal um, der ohne Netz läuft. Zwei Regler stellen Musik- und FX-Lautstärke getrennt ein (Standard 20 % Musik, 80 % FX); beide werden gespeichert. Zu Beginn jedes Auftrags startet automatisch ein zufälliger Titel (nach manuellem Pausieren nicht mehr). Auf dem Handy öffnet die Taste ♪ oben in der Mitte den Player.
 
 ## Technik
 
