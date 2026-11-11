@@ -29,7 +29,7 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | Linksklick / `R` | Schießen / Nachladen |
 | `T` | Aufklärungsdrohne mit Videobild (ca. 1 Minute Akku, lädt in unter einer Minute nach): `W A S D` fliegen, `Q` hoch, `E` runter, `Shift` schneller, Maus schaut, Klick markiert die Einheit im Bild. Zu nahe an Einheiten lösen Alarm aus. |
 | `J` | Orbitallaser: Satellitenansicht, Mausrad zoomt bis auf Straßenhöhe, Ziehen/`W A S D` verschiebt, Klick setzt das Kreuz, `Enter` feuert. Einmal pro Auftrag, mindestens 280 m von dir entfernt. Vernichtet alles im Umkreis von ca. 210 m (Pilzwolke, Druckwelle, Krater bleibt). |
-| `N` | Kamera-Rakete: `N` schärft, Linksklick startet (einmal pro Auftrag). Lenken mit Maus oder `A D`, `Q E` Neigung, `W S` Tempo. Das Kamerabild rauscht und verliert mit der Entfernung das Signal. Einschlag zerstört Gebäude im Umkreis von 30 m und tötet Einheiten im Umkreis von 45 m. |
+| `N` | Kamera-Rakete: `N` schärft, Linksklick startet (einmal pro Auftrag). Lenken mit Maus oder `A D`, `Q E` Neigung, `W S` Tempo. Das Kamerabild rauscht und verliert mit der Entfernung das Signal. Einschlag zerstört Gebäude im Umkreis von 30 m und zerstört Einheiten im Umkreis von 45 m. |
 | `L` | Scheinwerfer des Jeeps (standardmäßig aus; im Dunkeln oder Nebel ist der Jeep ohne Licht kaum zu sehen) |
 | `G` | Jeep einsteigen / aussteigen (Fahren: `W A S D`, `Leertaste` bremst, `Shift` Boost) |
 | `Tab` / `M` | Übersichtskarte (zoombar, mit Namen, Schussplätzen und Routen) |
@@ -55,9 +55,9 @@ Auf dem Startbildschirm gibt es drei Stufen: **Recruit** (langsamere Entdeckung,
 ## Spielprinzip
 
 * **Ballistik:** Geschosse haben Flugzeit, Luftwiderstand, Fall und Winddrift. Entfernung messen, Nullpunkt wählen, mit dem Mil-Absehen vorhalten.
-* **Tarnung:** Lärm, Leichen, Sichtlinie und Haltung füllen die Entdeckungsanzeige. Donner, Kirchenglocke und Schiffshorn überdecken einen Schuss; mit Schalldämpfer ist man nur im Umkreis hörbar. Sirenen und Generatoren lassen sich ausschalten.
+* **Tarnung:** Lärm, Wracks, Sichtlinie und Haltung füllen die Entdeckungsanzeige. Donner, Kirchenglocke und Schiffshorn überdecken einen Schuss; mit Schalldämpfer ist man nur im Umkreis hörbar. Sirenen und Generatoren lassen sich ausschalten.
 * **Aufträge:** mehrere Ziele pro Auftrag, Reihenfolge-Abhängigkeiten, Fahrzeuge, Zeitlimits, optionale Zusatzziele und Boni. Zivilisten kosten Geld.
-* **Gegner-KI:** Gegner suchen Deckung, rücken von Deckung zu Deckung vor, lugen aus der Deckung, flankieren, funken sich Hinweise zu (Reichweite sinkt, wenn das Relais zerstört ist) und durchsuchen die letzte bekannte Position. Beim Aufspüren einer Leiche oder eines Schusses verstecken sich Wachen, statt zu stürmen.
+* **Gegner-KI:** Gegner suchen Deckung, rücken von Deckung zu Deckung vor, lugen aus der Deckung, flankieren, funken sich Hinweise zu (Reichweite sinkt, wenn das Relais zerstört ist) und durchsuchen die letzte bekannte Position. Beim Aufspüren einer Wrack oder eines Schusses verstecken sich Wachen, statt zu stürmen.
 * **Versteckte Scharfschützen:** getarnte Schützen liegen im Gelände. Ein Schuss von ihnen erscheint als roter Punkt auf dem Kompass; nach einem Schuss wechseln sie die Stellung.
 * **Fahrzeuge:** eigener Jeep (befahrbar, überfährt Gegner), Patrouillenfahrzeuge der Gegner, die bei Alarm absitzen, und ein Verstärkungs-Lkw nach einem Sirenenalarm.
 * **Roboter:** Außer dir ist niemand ein Mensch. Wachen, Offiziere, Scharfschützen und unbewaffnete Serviceroboter sind humanoide Maschinen im Look des AgiBot A3 (weiße Schale, glänzender schwarzer Kopf und Gelenke); sie unterscheiden sich nur in Farben (Trooper, Scout, Heavy, Kommandoeinheit, Tarn-Scharfschütze). Ein Statuslicht an Kopf und Hals zeigt den Zustand: Cyan/Grün ruhig, Amber misstrauisch, Rot im Kampf.
