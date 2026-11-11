@@ -161,6 +161,25 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
 @media (max-width:760px){#mappanel{position:absolute;right:0;bottom:0;top:auto;max-height:46%;width:100%;border-left:0;border-top:1px solid var(--line)}#maphint{display:none}}
 .manual{width:100%;max-height:none}.manual .hbody{overflow:visible}
 #drive{position:absolute;bottom:calc(52px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);text-align:center;font-family:var(--mono)}#drive b{font-family:var(--display);font-size:44px;font-weight:700;line-height:1}#drive em{display:block;font-style:normal;font-size:11px;color:var(--dim);letter-spacing:.06em}
+
+#radio{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:7;width:min(340px,calc(100vw - 24px));background:rgba(20,28,37,.94);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.5);padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:11px;color:var(--bone);backdrop-filter:blur(4px)}
+#radio[hidden]{display:none}
+#radio .rh{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:800;letter-spacing:.14em;font-size:15px}
+#radio .rh kbd{font:500 10px var(--mono);border:1px solid var(--line);padding:1px 5px;color:var(--dim)}
+#radio .rh button{margin-left:auto}
+#radio button{background:transparent;color:var(--bone);border:1px solid var(--line);min-width:34px;height:30px;font:600 14px var(--mono);cursor:pointer;padding:0 8px}
+#radio button:hover,#radio button.on{border-color:var(--brass);color:var(--brass)}
+#radio button.pri{background:var(--flare);border-color:var(--flare);color:#fff;min-width:46px}
+#rnow{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--brass);font-size:12px}
+#radio .rt{display:flex;align-items:center;gap:8px;color:var(--dim)}#radio .rt input{flex:1}
+#radio .rc{display:flex;gap:6px}
+#radio label{display:flex;align-items:center;gap:10px;color:var(--dim);letter-spacing:.12em}#radio label span{width:44px}#radio label input{flex:1}
+#radio input[type=range]{accent-color:var(--brass);height:22px;margin:0}
+#rl{max-height:150px;overflow-y:auto;border-top:1px dashed var(--line);display:none;flex-direction:column}#radio.list #rl{display:flex}
+#rl div{flex:none;padding:5px 4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--dim);border-bottom:1px solid rgba(255,255,255,.04)}
+#rl div:hover{color:var(--bone)}#rl div.cur{color:var(--brass);background:rgba(200,164,87,.08)}
+body.touch #radio{left:50%;transform:translateX(-50%);bottom:max(8px,env(safe-area-inset-bottom,0px));font-size:12px}
+body.touch #radio button{height:38px;min-width:42px}
 </style>
 
 <canvas id="c"></canvas>
@@ -210,6 +229,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
             <dt>Left click · R</dt><dd>Fire. Reload.</dd>
             <dt>Tab / M</dt><dd>Tactical map with tagged hostiles and their routes.</dd>
             <dt>B</dt><dd>Use a field dressing.</dd>
+            <dt>O</dt><dd>Radio: music player with its own Music and FX volume sliders (pauses the game while open).</dd>
             <dt>H / F1</dt><dd>Field manual (help).</dd>
             <dt>Esc</dt><dd>Pause.</dd>
           </dl>
@@ -259,6 +279,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
         <tr><td>1 · 2 · 3</td><td>Standard · armour piercing · lure rounds.</td></tr>
         <tr><td>C · X · Space</td><td>Crouch · prone · stand.</td></tr>
         <tr><td>B</td><td>Bandage (field dressing): restores 60 health.</td></tr>
+        <tr><td>O</td><td>Radio: music player, Music and FX volume.</td></tr>
         <tr><td>G</td><td>Get into or out of your jeep (marked on the map). While driving: W A S D, Space brake, Shift boost, mouse looks around. You cannot shoot from the jeep.</td></tr>
         <tr><td>Tab / M</td><td>Overview map. The game pauses while it is open.</td></tr>
         <tr><td>H / F1</td><td>This manual. Closes with H or Esc.</td></tr>
@@ -307,6 +328,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
 <div id="pause" class="over" hidden><div class="card"><h2>Paused</h2><p>Click Resume to take the rifle back.</p><div class="btns"><button class="pri" id="resume">Resume</button><button id="pausehelp">Help (H)</button><button id="abort">Abort contract</button></div></div></div>
 <div id="result" class="over" hidden><div class="card"><h2 id="rtitle"></h2><p id="rtext"></p><table id="rtable"></table><div class="btns"><button class="pri" id="rboard">Contract board</button><button id="retry">Run it again</button></div></div></div>
 
+<div id="radio" hidden>
+  <div class="rh"><span>RADIO</span><kbd>O</kbd><button id="rx" title="Close">×</button></div>
+  <div id="rnow">Press play</div>
+  <div class="rt"><span id="rcur">00:00</span><input type="range" id="rseek" min="0" max="1000" value="0"><span id="rtot">00:00</span></div>
+  <div class="rc"><button id="rprev" title="Previous">⏮</button><button id="rplay" class="pri" title="Play / pause">▶</button><button id="rnext" title="Next">⏭</button><button id="rshuf" title="Shuffle">⇄</button><button id="rlist" title="Track list">≡</button></div>
+  <label><span>MUSIC</span><input type="range" id="rvm" min="0" max="1" step=".01"></label>
+  <label><span>FX</span><input type="range" id="rvf" min="0" max="1" step=".01"></label>
+  <div id="rl"></div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (()=>{
@@ -1036,7 +1066,7 @@ function initAudio(){
   try{
     const c=A.c=new (window.AudioContext||window.webkitAudioContext)();A.sr=c.sampleRate;
     A.out=c.createDynamicsCompressor();A.out.threshold.value=-14;A.out.ratio.value=6;A.out.attack.value=.002;A.out.release.value=.25;
-    A.lp=c.createBiquadFilter();A.lp.type='lowpass';A.lp.frequency.value=20000;A.master=c.createGain();A.master.gain.value=.9;
+    A.lp=c.createBiquadFilter();A.lp.type='lowpass';A.lp.frequency.value=20000;A.master=c.createGain();A.master.gain.value=.9*(save.vfx===undefined?1:save.vfx);
     A.master.connect(A.lp);A.lp.connect(A.out);A.out.connect(c.destination);
     A.fx=c.createGain();A.fx.connect(A.master);A.amb=c.createGain();A.amb.connect(A.master);
     A.rev=c.createConvolver();A.room=c.createConvolver();A.wetO=c.createGain();A.wetI=c.createGain();A.wetI.gain.value=0;
@@ -2555,6 +2585,47 @@ function step(now,nr){
 buildLevel('basin');setSky('dawn');setupMap();setupHelp();applyQuality();camera.fov=55;camera.updateProjectionMatrix();renderMenu();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawTopo);
 requestAnimationFrame(frame);
+/* ================= radio (music player, key O) ================= */
+const RADIO={base:'https://www.enzocage.de/sphericlounge/mp3/',names:"spheric_lounge_alaska.mp3|spheric_lounge_albedo_main_beam.mp3|spheric_lounge_aphrodite.mp3|spheric_lounge_atmospheric_drift.mp3|spheric_lounge_auf_der_welt_allein.mp3|spheric_lounge_beacon.mp3|spheric_lounge_beauty_on.mp3|spheric_lounge_bills_gate.mp3|spheric_lounge_biocosmos.mp3|spheric_lounge_bluish_gate.mp3|spheric_lounge_crater_lake.mp3|spheric_lounge_curtain_speaks.mp3|spheric_lounge_dark_matter.mp3|spheric_lounge_dark_star.mp3|spheric_lounge_deep_into_it.mp3|spheric_lounge_desert_fog_belt.mp3|spheric_lounge_digesting_a_frog.mp3|spheric_lounge_disembodied.mp3|spheric_lounge_djurdjura.mp3|spheric_lounge_dream_space.mp3|spheric_lounge_dreamy_boy.mp3|spheric_lounge_dreamy_boy_long_way_home.mp3|spheric_lounge_el_golea.mp3|spheric_lounge_enchanting_technology.mp3|spheric_lounge_entrance_determinate.mp3|spheric_lounge_everspace.mp3|spheric_lounge_fetish_universe.mp3|spheric_lounge_fieldsync_alpha.mp3|spheric_lounge_fieldsync_beta.mp3|spheric_lounge_fieldsync_gamma.mp3|spheric_lounge_fieldsync_pablo.mp3|spheric_lounge_finally_they_crossed_the_ice.mp3|spheric_lounge_flatline.mp3|spheric_lounge_flyfishing.mp3|spheric_lounge_ghardaia.mp3|spheric_lounge_hiding_drone.mp3|spheric_lounge_homo_apprehensis_II.mp3|spheric_lounge_horizont.mp3|spheric_lounge_hovering_above.mp3|spheric_lounge_i'm_teleporting_you_now....mp3|spheric_lounge_illusory_world.mp3|spheric_lounge_incredible_trust.mp3|spheric_lounge_infinite_void.mp3|spheric_lounge_information_storm.mp3|spheric_lounge_inner_me.mp3|spheric_lounge_inside_arp.mp3|spheric_lounge_instrospective.mp3|spheric_lounge_interim_state.mp3|spheric_lounge_la_fleuve.mp3|spheric_lounge_last_cargo.mp3|spheric_lounge_liquid_id.mp3|spheric_lounge_living_organism.mp3|spheric_lounge_magnetic_fields.mp3|spheric_lounge_magnetix.mp3|spheric_lounge_meduse.mp3|spheric_lounge_micronesia.mp3|spheric_lounge_milky_way_above_us.mp3|spheric_lounge_minimal_grey.mp3|spheric_lounge_minus_fifteen_alpha.mp3|spheric_lounge_momo.mp3|spheric_lounge_morphium.mp3|spheric_lounge_morphium_air.mp3|spheric_lounge_mutans.mp3|spheric_lounge_my_dear_moon.mp3|spheric_lounge_next_island.mp3|spheric_lounge_nine_nails.mp3|spheric_lounge_nordic_sun.mp3|spheric_lounge_ooze.mp3|spheric_lounge_orbit.mp3|spheric_lounge_orbiting_earth.mp3|spheric_lounge_padparadscha.mp3|spheric_lounge_pale_twilight.mp3|spheric_lounge_personal_orbit.mp3|spheric_lounge_physical_model.mp3|spheric_lounge_piknik_na_obocine.mp3|spheric_lounge_psychedelic_universe.mp3|spheric_lounge_rachels_spiders.mp3|spheric_lounge_rain_digital_forest.mp3|spheric_lounge_resting_pulse.mp3|spheric_lounge_sakyapa.mp3|spheric_lounge_session_7_alpha.mp3|spheric_lounge_session_7_delta.mp3|spheric_lounge_shadowrun.mp3|spheric_lounge_sharp_light.mp3|spheric_lounge_shifting_layers.mp3|spheric_lounge_signal_to_noise_ratio.mp3|spheric_lounge_solaris.mp3|spheric_lounge_stalker.mp3|spheric_lounge_still_awake.mp3|spheric_lounge_stringtheory.mp3|spheric_lounge_sunrise_ahead.mp3|spheric_lounge_the_big_blue.mp3|spheric_lounge_the_garden.mp3|spheric_lounge_the_heartbeat_centers_while_in.mp3|spheric_lounge_the_human_abstract_alpha.mp3|spheric_lounge_the_human_abstract_beta.mp3|spheric_lounge_the_hunter.mp3|spheric_lounge_through_the_waves.mp3|spheric_lounge_time_machine.mp3|spheric_lounge_top_of_the_hill.mp3|spheric_lounge_transilvania.mp3|spheric_lounge_trickle.mp3|spheric_lounge_tyrell.mp3|spheric_lounge_uncertainty.mp3|spheric_lounge_under_the_ice_Achte_Session_04._06.03.2005_Geretsried.mp3|spheric_lounge_urban_spring.mp3|spheric_lounge_valley_of_urRu.mp3|spheric_lounge_virtual_nightflight.mp3|spheric_lounge_voyager.mp3|spheric_lounge_vurt_drive.mp3|spheric_lounge_waiting_to_be_born.mp3|spheric_lounge_walk_on_the_beach.mp3|spheric_lounge_warm_air.mp3|spheric_lounge_warm_cube.mp3".split('|')};
+RADIO.tr=RADIO.names.map(n=>({u:RADIO.base+encodeURIComponent(n),t:n.replace(/\.mp3$/i,'').replace(/^spheric_lounge_/,'').replace(/_/g,' ').replace(/\w\S*/g,w=>w[0].toUpperCase()+w.slice(1).toLowerCase())}));
+const rAudio=new Audio();rAudio.preload='none';
+let rIdx=-1,rPlaying=false,rErr=0,rFrom=null,rShuf=false;
+function applyVol(){const f=save.vfx===undefined?1:save.vfx,m=save.vmu===undefined?.5:save.vmu;rAudio.volume=clamp(m,0,1);if(A.master)A.master.gain.value=.9*f}
+function rFmt(s){if(!isFinite(s))return'00:00';return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0')}
+function rShow(){$('rplay').textContent=rPlaying?'❚❚':'▶';$('rnow').textContent=rIdx<0?'Press play':(rPlaying?'':'Paused · ')+RADIO.tr[rIdx].t;
+  for(const d of $('rl').children)d.classList.toggle('cur',+d.dataset.i===rIdx);const c=$('rl').querySelector('.cur');if(c&&$('radio').classList.contains('list'))c.scrollIntoView({block:'nearest'})}
+function rLoad(i){const n=RADIO.tr.length;rIdx=(i+n)%n;rAudio.src=RADIO.tr[rIdx].u;save.mt=rIdx;persist();
+  const p=rAudio.play();if(p&&p.then)p.then(()=>{rPlaying=true;rErr=0;rShow()}).catch(()=>{rPlaying=false;rShow()});rPlaying=true;rShow()}
+function rNext(d){if(rShuf&&d>0)rLoad(Math.floor(Math.random()*RADIO.tr.length));else rLoad((rIdx<0?0:rIdx)+d)}
+function rToggle(){if(rIdx<0){rLoad(rShuf?Math.floor(Math.random()*RADIO.tr.length):(save.mt||0));return}
+  if(rPlaying){rAudio.pause();rPlaying=false}else{rAudio.play().catch(()=>{});rPlaying=true}rShow()}
+rAudio.addEventListener('ended',()=>rNext(1));
+rAudio.addEventListener('error',()=>{if(rIdx<0)return;if(++rErr<4)setTimeout(()=>rNext(1),600);else{rPlaying=false;$('rnow').textContent='Stream unavailable (offline?)';$('rplay').textContent='▶'}});
+rAudio.addEventListener('timeupdate',()=>{if(rAudio.duration&&!rSeeking){$('rseek').value=rAudio.currentTime/rAudio.duration*1000;$('rcur').textContent=rFmt(rAudio.currentTime);$('rtot').textContent=rFmt(rAudio.duration)}});
+let rSeeking=false;
+function toggleRadio(on){const r=$('radio'),open=on===undefined?r.hidden:on;
+  if(open){if(!r.hidden)return;rFrom=G_.state;if(G_.state==='play'){G_.state='pause';unlock()}r.hidden=false;rShow()}
+  else{if(r.hidden)return;r.hidden=true;if(rFrom==='play'&&G_.state==='pause'&&$('pause').hidden&&$('help').hidden)resume();rFrom=null}}
+(function(){
+  $('rl').innerHTML=RADIO.tr.map((t,i)=>'<div data-i="'+i+'">'+String(i+1).padStart(3,'0')+' · '+t.t+'</div>').join('');
+  $('rl').onclick=e=>{const d=e.target.closest('div[data-i]');if(d)rLoad(+d.dataset.i)};
+  $('rplay').onclick=rToggle;$('rprev').onclick=()=>rNext(-1);$('rnext').onclick=()=>rNext(1);$('rx').onclick=()=>toggleRadio(false);
+  $('rshuf').onclick=()=>{rShuf=!rShuf;$('rshuf').classList.toggle('on',rShuf)};
+  $('rlist').onclick=()=>{$('radio').classList.toggle('list');rShow()};
+  $('rseek').addEventListener('input',()=>{rSeeking=true;if(rAudio.duration){rAudio.currentTime=$('rseek').value/1000*rAudio.duration;$('rcur').textContent=rFmt(rAudio.currentTime)}});
+  $('rseek').addEventListener('change',()=>{rSeeking=false});
+  $('rvm').value=save.vmu===undefined?.5:save.vmu;$('rvf').value=save.vfx===undefined?1:save.vfx;
+  $('rvm').oninput=e=>{save.vmu=+e.target.value;applyVol();persist()};
+  $('rvf').oninput=e=>{save.vfx=+e.target.value;applyVol();persist();if(A.c&&!$('radio').hidden)try{sfx.click()}catch(_){}};
+  $('radio').addEventListener('click',e=>{const a=document.activeElement;if(a&&a.tagName==='BUTTON')a.blur()});
+  if(innerHeight<520)$('radio').classList.remove('list');
+  applyVol();
+})();
+addEventListener('keydown',e=>{
+  if(e.code==='KeyO'&&!e.repeat&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();e.stopImmediatePropagation();toggleRadio();return}
+  if(!$('radio').hidden&&(e.code==='Escape'||e.code==='KeyP')){e.preventDefault();e.stopImmediatePropagation();toggleRadio(false)}
+},true);
+
 /* ================= touch controls ================= */
 const IS_TOUCH=(matchMedia('(pointer:coarse)').matches&&(navigator.maxTouchPoints>0||'ontouchstart' in window))||/[?&]touch\b/.test(location.search);
 if(IS_TOUCH){(function(){
@@ -2569,7 +2640,7 @@ if(IS_TOUCH){(function(){
   '<div class="tcol" id="tcs" hidden><div class="tb sm" data-a="breath"><b>≋</b><s>BREATH</s></div><div class="tb sm" data-a="zin"><b>+</b><s>ZOOM</s></div>'+
    '<div class="tb sm" data-a="zup"><b>▴</b><s>ZERO</s></div><div class="tb sm" data-a="zout"><b>−</b><s>ZOOM</s></div><div class="tb sm" data-a="zdn"><b>▾</b><s>ZERO</s></div></div>'+
   '<div class="tb sm" id="tbrake" data-a="brake" hidden><b>■</b><s>BRAKE</s></div>'+
-  '<div class="trow"><div class="tb sm" data-a="map"><b>▦</b><s>MAP</s></div><div class="tb sm" data-a="help"><b>?</b><s>HELP</s></div><div class="tb sm" data-a="pause"><b>Ⅱ</b></div></div>';
+  '<div class="trow"><div class="tb sm" data-a="map"><b>▦</b><s>MAP</s></div><div class="tb sm" data-a="help"><b>?</b><s>HELP</s></div><div class="tb sm" data-a="music"><b>♪</b><s>RADIO</s></div><div class="tb sm" data-a="pause"><b>Ⅱ</b></div></div>';
   document.body.appendChild(tc);
   const st=document.createElement('style');st.textContent=`
   body.touch{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:none}
@@ -2655,6 +2726,7 @@ if(IS_TOUCH){(function(){
       case 'brake':keys.Space=down;break;
       case 'map':if(down)toggleMap(true);break;
       case 'help':if(down)openHelp();break;
+      case 'music':if(down)toggleRadio(true);break;
       case 'pause':if(down)pause();break;
     }}
   tc.addEventListener('pointerdown',e=>{const b=e.target.closest('.tb');if(!b)return;e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(_){}

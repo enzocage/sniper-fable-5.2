@@ -29,6 +29,7 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | `Tab` / `M` | Übersichtskarte (zoombar, mit Namen, Schussplätzen und Routen) |
 | `B` | Verbandspäckchen |
 | `H` / `F1` | Hilfe (Feldhandbuch) |
+| `O` | Radio: Musikplayer als Mini-Overlay mit eigenen Reglern für Musik und FX (pausiert das Spiel, solange er offen ist) |
 | `Esc` | Pause |
 
 ### Touch-Steuerung (Handy/Tablet, Querformat)
@@ -65,6 +66,10 @@ Wird automatisch erkannt. Fast unsichtbar: Tasten sind nur schwach eingeblendet.
 ## Karte und Hilfe
 
 `Tab` öffnet die Übersichtskarte: Höhenlinien, Raster, Benennungen, berechnete Schussplätze (V1, V2) mit Reichweite, deckungsorientierte Schleichroute, Aufklärungszonen der Ziele und Strategietipps. Die Karte zeigt das gesamte Gelände samt Umgebung; das Missionsgebiet ist gestrichelt umrandet. Mausrad zoomt, Ziehen verschiebt, Klick setzt einen Wegpunkt. `H` öffnet das Feldhandbuch (steht auch auf dem Startbildschirm).
+
+## Radio
+
+`O` öffnet einen kleinen Musikplayer (Wiedergabe, Vor/Zurück, Zufall, Suchleiste, Titelliste) mit den Spheric-Lounge-Tracks, die per Stream von enzocage.de geladen werden (Internet nötig). Zwei Regler stellen Musik- und FX-Lautstärke getrennt ein; beide werden gespeichert. Auf dem Handy öffnet die Taste ♪ oben in der Mitte den Player.
 
 ## Technik
 
