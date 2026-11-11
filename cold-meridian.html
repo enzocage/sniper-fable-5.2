@@ -3170,9 +3170,7 @@ function strikeImpact(){const P=player,pos=STK.pos,x=pos.x,z=pos.z;STK.imp=true;
   const cc=new THREE.Color();for(let i=0;i<N;i++){const a=Math.random()*6.283,r=Math.random()*R_CRATER;const sp=18+Math.random()*90,up=40+Math.random()*130;STK.deb.p.push(new V(x+Math.cos(a)*r,pos.y+2,z+Math.sin(a)*r));STK.deb.v.push(new V(Math.cos(a)*sp,up,Math.sin(a)*sp));STK.deb.r.push(new V(Math.random()*6,Math.random()*6,Math.random()*6));STK.deb.s.push(.8+Math.random()*3.8);STK.deb.life.push(5+Math.random()*5);im.setColorAt(i,cc.setHex([0x4a3b2c,0x5d5348,0x2e2a27,0x6f6a62,0xa05a20][i%5]))}
   scene.add(im);STK.objs.push(im);
   // mushroom cloud
-  STK.fire=stkBlob(1,0xffd890,0xffa030);STK.stem=[];for(let i=0;i<16;i++)STK.stem.push({m:stkBlob(1,0x554b43,0x442000),jx:(Math.random()-.5)*18,jz:(Math.random()-.5)*18,rs:.85+Math.random()*.5});
-  STK.cap=[];for(let i=0;i<30;i++)STK.cap.push({m:stkBlob(1,0x5e544b,0x552200),phi:i/30*6.283+Math.random()*.2,th:Math.random()*6.283,rs:.8+Math.random()*.5});
-  STK.dome=[0,1,2].map(i=>({m:stkBlob(1,0x6a5f55,0x663300)}));
+  STK.fire=stkBlob(1,0xffd890,0xffa030);stkCloudInit();
   STK.shock=new THREE.Mesh(new THREE.SphereGeometry(1,64,24,0,Math.PI*2,0,Math.PI/2),new THREE.MeshBasicMaterial({color:0xffe6b8,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide,fog:false}));STK.shock.position.copy(pos);scene.add(STK.shock);STK.objs.push(STK.shock);
   STK.wall=new THREE.Mesh(new THREE.CylinderGeometry(1,1,1,64,1,true),new THREE.MeshBasicMaterial({color:0xb59a78,transparent:true,opacity:.35,depthWrite:false,side:THREE.DoubleSide,fog:false}));STK.wall.position.copy(pos);scene.add(STK.wall);STK.objs.push(STK.wall);
   STK.flare=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex,color:0xfff0c0,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:1,fog:false}));STK.flare.position.set(x,pos.y+60,z);STK.flare.scale.setScalar(900);scene.add(STK.flare);STK.objs.push(STK.flare);
@@ -3184,6 +3182,44 @@ function strikeImpact(){const P=player,pos=STK.pos,x=pos.x,z=pos.z;STK.imp=true;
   $('stk').textContent='GROUND ZERO · '+Math.round(STK.dist)+' m';}
 const _sc1=new THREE.Color(),_sc2=new THREE.Color();
 function heatCol(c,em,k,hot){_sc1.setRGB(.62,.36,.17).lerp(_sc2.setRGB(.2,.18,.165),1-k);c.copy(_sc1);em.setRGB(1,.4,.08).multiplyScalar(Math.pow(hot,1.6)*.85)}
+
+/* mushroom cloud as a single point-sprite particle system: vortex-ring cap, stem, base surge; hot at first, then it cools, expands, thins and vanishes */
+function stkPuffTex(){const c=cv(128,128),x=c.getContext('2d'),r=rng(11);
+  const g=x.createRadialGradient(64,64,4,64,64,62);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.6,'rgba(230,230,230,.85)');g.addColorStop(1,'rgba(200,200,200,0)');x.fillStyle=g;x.fillRect(0,0,128,128);
+  for(let i=0;i<70;i++){const a=r()*6.283,d=r()*34,px=64+Math.cos(a)*d,py=64+Math.sin(a)*d,s=8+r()*20,gg=x.createRadialGradient(px,py,0,px,py,s),sh=Math.floor(120+r()*135);gg.addColorStop(0,'rgba('+sh+','+sh+','+sh+',.55)');gg.addColorStop(1,'rgba('+sh+','+sh+','+sh+',0)');x.fillStyle=gg;x.beginPath();x.arc(px,py,s,0,7);x.fill()}
+  x.globalCompositeOperation='destination-in';const m=x.createRadialGradient(64,64,10,64,64,63);m.addColorStop(0,'rgba(0,0,0,1)');m.addColorStop(.75,'rgba(0,0,0,.9)');m.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=m;x.fillRect(0,0,128,128);
+  const t=new THREE.CanvasTexture(c);return t}
+function stkPoints(n,additive,tex){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(n*3),3));g.setAttribute('aSize',new THREE.BufferAttribute(new Float32Array(n),1));g.setAttribute('aColor',new THREE.BufferAttribute(new Float32Array(n*3),3));g.setAttribute('aAlpha',new THREE.BufferAttribute(new Float32Array(n),1));
+  const m=new THREE.ShaderMaterial({uniforms:{uTex:{value:tex},uScale:{value:600}},transparent:true,depthWrite:false,blending:additive?THREE.AdditiveBlending:THREE.NormalBlending,
+    vertexShader:'attribute float aSize;attribute vec3 aColor;attribute float aAlpha;uniform float uScale;varying vec3 vC;varying float vA;void main(){vC=aColor;vA=aAlpha;vec4 mv=modelViewMatrix*vec4(position,1.);gl_PointSize=clamp(aSize*uScale/max(-mv.z,1.),0.,230.);gl_Position=projectionMatrix*mv;}',
+    fragmentShader:'uniform sampler2D uTex;varying vec3 vC;varying float vA;void main(){vec4 t=texture2D(uTex,gl_PointCoord);float a=t.a*vA;if(a<.004)discard;gl_FragColor=vec4(vC*(.55+.75*t.r),a);}'});
+  const pts=new THREE.Points(g,m);pts.frustumCulled=false;scene.add(pts);STK.objs.push(pts);return pts}
+function stkCloudInit(){
+  const k=[.5,.8,1][clamp(save.q===undefined?1:save.q,0,2)],tex=STK.tex||(STK.tex=stkPuffTex()),nS=Math.round(380*k),nC=Math.round(820*k),nK=Math.round(240*k),nH=Math.round(170*k),N=nS+nC+nK,r=Math.random;
+  const C=STK.cloud={N,nS,nC,nK,nH,smoke:stkPoints(N,false,tex),hot:stkPoints(nH,true,tex),u1:new Float32Array(N),u2:new Float32Array(N),u3:new Float32Array(N),tb:new Float32Array(N),s0:new Float32Array(N),h1:new Float32Array(nH),h2:new Float32Array(nH),h3:new Float32Array(nH)};
+  for(let i=0;i<N;i++){C.u1[i]=r();C.u2[i]=r();C.u3[i]=r();if(i<nS){C.tb[i]=C.u1[i]*3.2;C.s0[i]=15+r()*12}else if(i<nS+nC){C.tb[i]=.5+r()*2.4;C.s0[i]=22+r()*20}else{C.tb[i]=r()*2.5;C.s0[i]=20+r()*16}}
+  for(let i=0;i<nH;i++){C.h1[i]=r();C.h2[i]=r();C.h3[i]=r()}}
+const _cc=new THREE.Color();
+function stkCloudUpdate(tau){const C=STK.cloud;if(!C)return;const pos=STK.pos,x0=pos.x,y0=pos.y,z0=pos.z,uS=innerHeight*.5/Math.tan(camera.fov*Math.PI/360);
+  const Hc=520*(1-Math.exp(-tau/13)),capR=40+190*(1-Math.exp(-tau/9)),minor=28+60*(1-Math.exp(-tau/10)),roll=.9*16*(1-Math.exp(-tau/16))+.1*tau,gf=1-smooth(34,74,tau);
+  const sm=C.smoke,P=sm.geometry.attributes.position.array,S=sm.geometry.attributes.aSize.array,Co=sm.geometry.attributes.aColor.array,Al=sm.geometry.attributes.aAlpha.array;sm.material.uniforms.uScale.value=uS;C.hot.material.uniforms.uScale.value=uS;
+  const tmp=[0,0,0];
+  for(let i=0;i<C.N;i++){const a=tau-C.tb[i];if(a<0||gf<=0){Al[i]=0;continue}
+    const type=i<C.nS?0:i<C.nS+C.nC?1:2,u1=C.u1[i],u2=C.u2[i],u3=C.u3[i];let x,y,z,heat,al,sz=C.s0[i]*(1+.07*a);
+    if(type===0){const s=u1,hs=Hc*.97,rr=(12+16*Math.pow(1-s,1.5))*(.4+.9*u3)+ (a>2?Math.min(14,(a-2)*.7):0),ph=u2*6.283+a*.18*(1-s)+s*1.6;x=x0+Math.cos(ph)*rr;z=z0+Math.sin(ph)*rr;y=y0+s*hs+Math.sin(a*.7+u2*9)*2;heat=Math.exp(-a/(6+8*(1-s)));al=.5;sz*=.95}
+    else if(type===1){const ph=u1*6.283,th=u2*6.283+roll,rr=minor*(.3+.7*u3),R=capR+Math.cos(th)*rr;x=x0+Math.cos(ph)*R;z=z0+Math.sin(ph)*R;y=y0+Hc+Math.sin(th)*rr*.82+8;heat=Math.exp(-a/9)*(.5+.5*Math.max(0,-Math.cos(th)));al=.55;sz*=1+.02*minor/30}
+    else{const ph=u1*6.283,Rk=Math.min(420,45+36*Math.pow(Math.max(a,0),.78))*(.75+.5*u3);x=x0+Math.cos(ph)*Rk;z=z0+Math.sin(ph)*Rk;y=H(x,z)+4+u2*16*(1+a*.12);heat=Math.exp(-a/3);al=.42*(1-smooth(14,30,tau));sz*=1.1+.05*a}
+    const fi=smooth(0,1.3,a),thin=1/(1+.05*a*a*.12+.035*a);
+    P[i*3]=x;P[i*3+1]=y;P[i*3+2]=z;S[i]=sz;Al[i]=al*fi*thin*gf;
+    // colour: white-yellow -> orange -> dull red -> dark smoke -> pale dust
+    const cool=clamp(a/26,0,1);let r_,g_,b_;
+    if(heat>.55){const t=(heat-.55)/.45;r_=1;g_=.55+.4*t;b_=.2+.45*t}else if(heat>.15){const t=(heat-.15)/.4;r_=.38+.62*t;g_=.2+.35*t;b_=.14+.06*t}else{const t=heat/.15;r_=.2+.18*t;g_=.18+.02*t;b_=.17-.03*t}
+    const lite=smooth(.3,1,cool)*.35;Co[i*3]=r_+lite*.3;Co[i*3+1]=g_+lite*.28;Co[i*3+2]=b_+lite*.25}
+  sm.geometry.attributes.position.needsUpdate=sm.geometry.attributes.aSize.needsUpdate=sm.geometry.attributes.aColor.needsUpdate=sm.geometry.attributes.aAlpha.needsUpdate=true;
+  // hot additive core: glows for the first seconds, rises with the ball
+  const hp=C.hot.geometry.attributes.position.array,hs_=C.hot.geometry.attributes.aSize.array,hc=C.hot.geometry.attributes.aColor.array,ha=C.hot.geometry.attributes.aAlpha.array,hk=Math.exp(-tau/3.6),by=40+Hc*.42;
+  for(let i=0;i<C.nH;i++){const ph=C.h1[i]*6.283,rr=(8+C.h2[i]*42)*(1+tau*.25),yy=y0+by*(.4+C.h3[i]*.8)+(C.h3[i]-.5)*50;hp[i*3]=x0+Math.cos(ph)*rr;hp[i*3+1]=yy;hp[i*3+2]=z0+Math.sin(ph)*rr;hs_[i]=(26+C.h2[i]*30)*(1+tau*.12);hc[i*3]=1;hc[i*3+1]=.52+.25*hk;hc[i*3+2]=.14+.2*hk;ha[i]=.5*hk*smooth(0,.25,tau)*gf}
+  C.hot.geometry.attributes.position.needsUpdate=C.hot.geometry.attributes.aSize.needsUpdate=C.hot.geometry.attributes.aColor.needsUpdate=C.hot.geometry.attributes.aAlpha.needsUpdate=true}
 const x_=(d,R)=>0,z_=(d,R)=>0;
 function strikeTick(rt){const P=player;STK.t+=rt;const t=STK.t,pos=STK.pos;
   if(!STK.imp){
@@ -3206,16 +3242,8 @@ function strikeTick(rt){const P=player;STK.t+=rt;const t=STK.t,pos=STK.pos;
   STK.beam.material.opacity=Math.max(0,1-tau*1.6);STK.beam.scale.set(8+tau*30,1,8+tau*30);STK.glow.material.opacity=Math.max(0,1-tau*1.2);STK.flare.material.opacity=Math.max(0,Math.exp(-tau*.45)*(.8+.2*Math.sin(tau*31)));STK.flare.scale.setScalar(900+tau*80);
   // fireball
   const fr=110*(1-Math.exp(-tau*1.1)),fy=pos.y+fr*.55+Math.min(tau,6)*14+Math.max(0,tau-6)*6,heat=Math.exp(-tau/9);
-  STK.fire.position.set(x,fy,z);STK.fire.scale.setScalar(Math.max(1,fr*(tau>9?Math.max(0,1-(tau-9)/5):1)));heatCol(STK.fire.material.color,STK.fire.material.emissive,.35+.65*heat,Math.min(1,heat*1.3));STK.fire.material.color.lerp(_sc1.setRGB(1,.95,.75),Math.exp(-tau*1.4));
-  // stem
-  const top=Math.min(430,60*Math.pow(tau,1.02)+18*Math.sqrt(tau)),capR=45+165*(1-Math.exp(-tau*.17)),capY=pos.y+top+18;
-  STK.stem.forEach((s,i)=>{const f=i/15,h=f*top,vis=tau>.2;s.m.visible=vis&&h<=top;const r=(34-12*f)*s.rs*(1+Math.min(tau,10)*.045)*(tau<.8?tau/.8:1);const sway=Math.sin(tau*.5+i)*3;
-    s.m.position.set(x+s.jx*(1-f*.4)+sway,pos.y+h+Math.sin(tau*2+i)*1.5,z+s.jz*(1-f*.4));s.m.scale.setScalar(Math.max(.1,r));const hot=clamp(1-f*.9-tau/16,0,1);heatCol(s.m.material.color,s.m.material.emissive,clamp(tau/12+f*.2,0,1),hot)});
-  // cap torus
-  const mr=Math.min(62,18+tau*8);STK.cap.forEach((c,i)=>{const R=capR,th=c.th+tau*.55,ph=c.phi+tau*.04,rr=R+Math.cos(th)*mr*.9,y=capY+Math.sin(th)*mr*.75;c.m.visible=tau>1.2;
-    c.m.position.set(x+Math.cos(ph)*rr,pos.y+Math.min(top,tau*70)+(y-capY)+ (capY-pos.y-Math.min(top,tau*70))*Math.min(1,tau/6),z+Math.sin(ph)*rr);
-    const s=Math.max(.1,mr*c.rs*(tau<2.5?(tau-1.2)/1.3:1));c.m.scale.setScalar(s);const outer=Math.cos(th)>.2;heatCol(c.m.material.color,c.m.material.emissive,clamp(tau/14,0,1),clamp(.95-tau/18+(outer?-.2:.15),0,1))});
-  STK.dome.forEach((d,i)=>{d.m.visible=tau>1.4;d.m.position.set(x+(i-1)*capR*.3,capY+mr*.8-i%2*6,z+(i===1?0:(i-1)*capR*.1));d.m.scale.set(capR*(.5-Math.abs(i-1)*.12),mr*.7,capR*(.5-Math.abs(i-1)*.12));heatCol(d.m.material.color,d.m.material.emissive,clamp(tau/14,0,1),clamp(.9-tau/16,0,1))});
+  STK.fire.position.set(x,fy,z);STK.fire.scale.setScalar(Math.max(1,fr*.72*(tau>.5?Math.max(0,1-(tau-.5)/1.4):1)));heatCol(STK.fire.material.color,STK.fire.material.emissive,.35+.65*heat,Math.min(1,heat*1.3));STK.fire.material.color.lerp(_sc1.setRGB(1,.95,.75),Math.exp(-tau*1.4));
+  stkCloudUpdate(tau);
   // shock dome and dust wall
   const sr=Math.min(1700,720*tau+60);STK.shock.scale.set(sr,sr*.55,sr);STK.shock.material.opacity=clamp(.4*(1-sr/1700),0,.4)*(tau<.05?0:1);
   const wr=Math.min(1100,430*tau+40);STK.wall.scale.set(wr,50+tau*5,wr);STK.wall.position.y=pos.y+25;STK.wall.material.opacity=clamp(.4*(1-wr/1100),0,.4);
@@ -3237,7 +3265,7 @@ function strikeTick(rt){const P=player;STK.t+=rt;const t=STK.t,pos=STK.pos;
   // end
   if(tau>40){const k=clamp((tau-40)/14,0,1);for(const o of STK.objs){if(o.material&&o.material.opacity!==undefined&&o.isMesh&&!o.isInstancedMesh){o.material.transparent=true;o.material.opacity=1-k}}}
   if(tau>13)$('stk').hidden=true;
-  if(tau>54||(STK.on&&tau>40&&false))strikeClear()}
+  if(tau>80)strikeClear()}
 function strikeClear(restoreOnly){
   for(const o of STK.objs){scene.remove(o);if(o.material&&o.material.dispose&&!o.isSprite)o.material.dispose()}STK.objs.length=0;
   if(STK.deb){scene.remove(STK.deb.m);STK.deb=null}

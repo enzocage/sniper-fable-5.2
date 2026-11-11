@@ -46,6 +46,10 @@ Wird automatisch erkannt. Fast unsichtbar: Tasten sind nur schwach eingeblendet.
 * **Weitere Tasten:** Zielfernrohr, Nachladen, Haltung (Stehen/Hocken/Liegen), Jeep, Munition, Verband; im Zielfernrohr Luft anhalten, Zoom ±, Absehen ±; im Fahrzeug Bremse. Oben mittig: Karte, Hilfe, Pause.
 * Karte: Pinch zum Zoomen, ein Finger verschiebt. Vollbild und Querformat werden beim ersten Tippen angefordert. Zum Testen am Desktop: `?touch` an die URL hängen.
 
+## Schwierigkeit und Taktik
+
+Auf dem Startbildschirm gibt es drei Stufen: **Recruit** (langsamere Entdeckung, kleinere Garnison, Gegner treffen schlechter, Honorar ×0,8), **Veteran** (das vorgesehene Spiel) und **Ghost** (schärfere Sicht, größere Garnison, ein zusätzlicher versteckter Scharfschütze, schnellere Verstärkung, keine Einschlagsanzeige, Honorar ×1,45). Auf allen Karten laufen zusätzliche Perimeter-Patrouillen, die deine Anmarschwege kreuzen. Büsche und Hecken verdecken und dämpfen Sichtlinien (hocken oder liegen in einem Busch wirkt stark). Die Exposure-Anzeige hat einen Ton: ein dunkles Dröhnen, das exponentiell lauter wird, je näher du 100 % kommst.
+
 ## Spielprinzip
 
 * **Ballistik:** Geschosse haben Flugzeit, Luftwiderstand, Fall und Winddrift. Entfernung messen, Nullpunkt wählen, mit dem Mil-Absehen vorhalten.
