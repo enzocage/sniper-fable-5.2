@@ -3320,7 +3320,7 @@ function missileTick(dt,rt){const P=player,k=keys,p=MSL.pos;
   $('mslS').textContent='SIG '+Math.round(MSL.sig*100)+'%';$('mslA').textContent='ALT '+Math.max(0,Math.round(p.y-H(p.x,p.z)))+' m';$('mslV').textContent='SPD '+Math.round(MSL.spd*3.6)+' km/h';$('mslR').textContent='T-'+Math.max(0,32-MSL.t).toFixed(0)+' s';
   if(MSL.snd&&A.c){MSL.snd.f.frequency.setTargetAtTime(500+MSL.spd*14+Math.random()*200,A.c.currentTime,.05);MSL.snd.g.gain.setTargetAtTime(.2+lvl*.25,A.c.currentTime,.05)}}
 function mslNoise(a){const c=$('mslN'),x=MSL.nz||(MSL.nz=c.getContext('2d')),w=c.width,h=c.height,im=x.createImageData(w,h),d=im.data;for(let i=0;i<d.length;i+=4){const v=Math.random()*255;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255}x.putImageData(im,0,0);c.style.opacity=a}
-function missileBlast(pos){const P=player,x=pos.x,z=pos.z,RK=44,RC=30;MSL.dead=true;MSL.endT=1.1;$('mslX').hidden=false;mslAudio(false);L.struck=true;
+function missileBlast(pos){const P=player,x=pos.x,z=pos.z,RK=44,RC=30;L.struck=true;mslEnd();
   const dP=Math.hypot(P.x-x,P.z-z);if(dP<34){finish(false,'You were caught in your own missile blast.');return}
   for(const b of L.boxes){if(!b.alive)continue;const dx=b.c.x-x,dz=b.c.z-z;if(dx*dx+dz*dz<RC*RC){b.alive=false;if(b.mesh)b.mesh.visible=false;const k=b.kind;if(k==='relay'||k==='obj')mEvent('destroy',b);else if(k==='gen'){setPower(false);mEvent('power')}}}
   for(const m of L.bms||[])wipeBatch(m,x,z,RC);
@@ -3339,10 +3339,11 @@ function missileBlast(pos){const P=player,x=pos.x,z=pos.z,RK=44,RC=30;MSL.dead=t
   const sh=new THREE.Mesh(new THREE.SphereGeometry(1,40,16,0,Math.PI*2,0,Math.PI/2),new THREE.MeshBasicMaterial({color:0xffe6b8,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide,fog:false}));sh.position.set(x,pos.y,z);scene.add(sh);
   const fl=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex,color:0xfff0c0,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:1,fog:false}));fl.position.copy(_t);fl.scale.setScalar(160);scene.add(fl);
   const li=new THREE.PointLight(0xffb060,12,420,1);li.position.set(x,pos.y+12,z);scene.add(li);
-  BL.push({t:0,fb,sh,fl,li,x,y:pos.y,z,dist:dP});stkSnd('boom',dP,.7);G_.flash=1}
+  BL.push({t:0,fb,sh,fl,li,x,y:pos.y,z,dist:dP,face:1.4});stkSnd('boom',dP,.7);G_.flash=1}
 function blastTick(rt){const P=player;for(let i=BL.length-1;i>=0;i--){const b=BL[i];b.t+=rt;const t=b.t,r=34*(1-Math.exp(-t*3.4));
   b.fb.scale.setScalar(Math.max(.5,r));b.fb.position.set(b.x,b.y+1+r*.5+t*5,b.z);b.fb.material.opacity=clamp(1-(t-.4)/1.8,0,1);b.fb.material.color.setRGB(1,.75-.35*Math.min(1,t/1.5),.4-.25*Math.min(1,t/1.5));b.fb.material.emissive.setRGB(1,.5,.12).multiplyScalar(Math.max(0,1-t*.6));
   const sr=Math.min(220,200*t+4);b.sh.scale.set(sr,sr*.5,sr);b.sh.material.opacity=clamp(.4*(1-sr/220),0,.4);b.fl.material.opacity=Math.max(0,1-t*1.8);b.fl.scale.setScalar(160*(1-t*.5)+10);b.li.intensity=12*Math.exp(-t*2.2);
+  if(b.face>0){b.face-=rt;const dx=b.x-P.x,dz=b.z-P.z,ty=Math.atan2(-dx,-dz),tp=Math.atan2(b.y+8-(P.fy+1.6),Math.hypot(dx,dz)),k=Math.min(1,rt*5);P.yaw+=angD(ty,P.yaw)*k;P.pitch+=(tp-P.pitch)*k}
   const nk=$('nuke');if(t<1.4){const o=clamp(1.05*Math.exp(-t*3.2)*(520/(b.dist+260)),0,.85);if(!STK.on||!STK.imp){nk.style.background='#fff';nk.style.opacity=o}}
   if(b.dist<500&&!G_.cine){const a=clamp(520/(b.dist+240),0,1.4)*Math.exp(-t*2.4)*.05;camera.rotation.x+=(Math.random()-.5)*a;camera.rotation.y+=(Math.random()-.5)*a;camera.position.y+=(Math.random()-.5)*a*2}
   if(t>2.8){scene.remove(b.fb,b.sh,b.fl,b.li);b.fb.material.dispose();b.sh.material.dispose();b.fl.material.dispose();BL.splice(i,1);if(!BL.length&&!(STK.on&&STK.imp))$('nuke').style.opacity=0}}}
