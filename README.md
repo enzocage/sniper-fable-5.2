@@ -25,6 +25,7 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | `1` `2` `3` | Standard-, panzerbrechende, Lockmunition |
 | `C` `X` `Leertaste` | Hocken, Liegen, Aufstehen |
 | Linksklick / `R` | Schießen / Nachladen |
+| `T` | Aufklärungsdrohne mit Videobild (ca. 1 Minute Akku, lädt in unter einer Minute nach): `W A S D` fliegen, `Q` hoch, `E` runter, `Shift` schneller, Maus schaut, Klick markiert die Einheit im Bild. Zu nahe an Einheiten lösen Alarm aus. |
 | `L` | Scheinwerfer des Jeeps (standardmäßig aus; im Dunkeln oder Nebel ist der Jeep ohne Licht kaum zu sehen) |
 | `G` | Jeep einsteigen / aussteigen (Fahren: `W A S D`, `Leertaste` bremst, `Shift` Boost) |
 | `Tab` / `M` | Übersichtskarte (zoombar, mit Namen, Schussplätzen und Routen) |
@@ -51,7 +52,7 @@ Wird automatisch erkannt. Fast unsichtbar: Tasten sind nur schwach eingeblendet.
 * **Gegner-KI:** Gegner suchen Deckung, rücken von Deckung zu Deckung vor, lugen aus der Deckung, flankieren, funken sich Hinweise zu (Reichweite sinkt, wenn das Relais zerstört ist) und durchsuchen die letzte bekannte Position. Beim Aufspüren einer Leiche oder eines Schusses verstecken sich Wachen, statt zu stürmen.
 * **Versteckte Scharfschützen:** getarnte Schützen liegen im Gelände. Ein Schuss von ihnen erscheint als roter Punkt auf dem Kompass; nach einem Schuss wechseln sie die Stellung.
 * **Fahrzeuge:** eigener Jeep (befahrbar, überfährt Gegner), Patrouillenfahrzeuge der Gegner, die bei Alarm absitzen, und ein Verstärkungs-Lkw nach einem Sirenenalarm.
-* **Roboter:** Außer dir ist niemand ein Mensch. Wachen, Offiziere, Scharfschützen und unbewaffnete Servicerobotern sind humanoide Maschinen (Trooper, Scout, Heavy, Kommandoeinheit, Tarn-Scharfschütze). Metallische Panzerung mit Umgebungsreflexion, leuchtende Augen als Zustandsanzeige: Cyan/Grün ruhig, Amber misstrauisch, Rot im Kampf.
+* **Roboter:** Außer dir ist niemand ein Mensch. Wachen, Offiziere, Scharfschützen und unbewaffnete Serviceroboter sind humanoide Maschinen im Look des AgiBot A3 (weiße Schale, glänzender schwarzer Kopf und Gelenke); sie unterscheiden sich nur in Farben (Trooper, Scout, Heavy, Kommandoeinheit, Tarn-Scharfschütze). Ein Statuslicht an Kopf und Hals zeigt den Zustand: Cyan/Grün ruhig, Amber misstrauisch, Rot im Kampf.
 * **Sichtfeld und Waffenreichweite:** Jede Einheit hat ein Sichtfeld, eine Sichtweite und eine Schussreichweite (Trooper 110°/115 m/135 m, Scout 130°/140 m/110 m, Heavy 90°/105 m/160 m, Scharfschützen 50°/420–480 m/520 m). Auf Abschüsse reagieren nur Einheiten, die sie sehen konnten (Sichtfeld, Reichweite, freie Sicht). Geschossen wird nur innerhalb der Waffenreichweite, außerhalb rücken die Einheiten vor. Auf der taktischen Karte zeigt ein Keil das Sichtfeld.
 * **Figuren (Technik):** Jede Person ist ein Skinned Mesh mit 15 Knochen und zufälligem Aussehen (Helm, Mütze, Weste, Rucksack, Brille, Mantel, Ghillie). Arme und Beine nutzen Zwei-Knochen-IK: Hände folgen den Waffengriffen, Schritte folgen der gelaufenen Strecke. Wachen schlendern mit wechselndem Tempo, rauchen, funken, strecken sich, unterhalten sich zu zweit und blicken sich um; Zivilisten fliehen oder kauern.
 * **Welt:** begehbare Häuser mit Treppen, Leitern, Balkonen und Dächern; Wasser, Wetter, Tag und Nacht.
