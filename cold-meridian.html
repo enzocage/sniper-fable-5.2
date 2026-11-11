@@ -359,9 +359,9 @@ body.mslOn #vit,body.mslOn #gun,body.mslOn #wind{opacity:.25}
         <g class="orbit"><circle cx="100" cy="8" r="3.6" fill="#c8a457"/></g>
       </svg></div>
       <div class="word">
-        <p class="eyebrow"><i></i>SAT-7 LINK ESTABLISHED · 47°29′N 11°04′E</p>
+        <p class="eyebrow"><i></i>SAT-7 LINK ESTABLISHED · MARS · 18°20′N 77°31′E</p>
         <h1 id="ttl"><b>Cold</b> <span>Meridian</span></h1>
-        <p class="tag">Sniper contracts against robot garrisons. One rifle, one satellite, one chance.</p>
+        <p class="tag">Sniper contracts on a Mars colony. Robot garrisons, one rifle, one satellite, one chance.</p>
         <p class="status" id="stLine"><i></i><span></span></p>
         <div class="diffbar" id="diffbar"><button data-d="0"><b>Recruit</b><small>slower eyes · fee ×0.8</small></button><button data-d="1"><b>Veteran</b><small>the intended game</small></button><button data-d="2"><b>Ghost</b><small>sharper units · fee ×1.45</small></button></div>
       </div>
@@ -561,6 +561,11 @@ const SKIES={
  blizzardnight:{top:0x0a0f18,hor:0x2a3442,fog:0x222c3a,sun:0x9db6ea,si:.35,hi:.3,fn:12,ff:240,sd:[.4,.62,.5],cloud:.9,stars:0,lamp:1.2,exp:1.3,vis:.38,snow:3},
  snownight:{top:0x070b14,hor:0x1f2a3e,fog:0x1a2535,sun:0x9db6ea,si:.7,hi:.35,fn:40,ff:420,sd:[.4,.62,.5],cloud:.6,stars:.4,lamp:1.2,exp:1.2,vis:.55,snow:2},
 };
+(function(){const mix=(a,b,k)=>{const c=new THREE.Color(a).lerp(new THREE.Color(b),k);return c.getHex()};
+  for(const k in SKIES){const s=SKIES[k];
+    if(k==='dusk'||k==='snowdusk'){s.top=mix(s.top,0x1c2a4e,.5);s.hor=mix(s.hor,0x5f8fb8,.7);s.fog=mix(s.fog,0x4d5266,.6);s.sun=0xa8cfff;continue}
+    if(k==='night'||k==='darknight'||k==='snownight'||k==='blizzardnight'){s.fog=mix(s.fog,0x1e1a1c,.35);continue}
+    s.top=mix(s.top,0x7a4e3a,.55);s.hor=mix(s.hor,0xe0a77c,.6);s.fog=mix(s.fog,0xb98667,.62);s.sun=mix(s.sun,0xffe2c0,.5);if(s.rain){delete s.rain;s.fn=Math.min(s.fn,60);s.ff=Math.min(s.ff,520)}}})();
 const skyMat=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,
   uniforms:{top:{value:new THREE.Color},hor:{value:new THREE.Color},sunCol:{value:new THREE.Color},sunDir:{value:new V(0,1,0)},cloud:{value:.5},stars:{value:0},time:{value:0},flash:{value:0}},
   vertexShader:'varying vec3 vDir;void main(){vDir=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
@@ -617,6 +622,7 @@ function grain(seed,rep,blobs){const c=cv(256,256),x=c.getContext('2d'),r=rng(se
   for(let i=0;i<blobs;i++){x.fillStyle='rgba(90,90,90,'+(.05+r()*.08)+')';x.beginPath();x.arc(r()*256,r()*256,4+r()*14,0,7);x.fill()}
   if(!blobs)for(let i=0;i<256;i+=16){x.fillStyle='rgba(0,0,0,.10)';x.fillRect(0,i,256,1.5)}
   const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep,rep);t.anisotropy=4;return t}
+const MARS_PAL={grass:0x7e4630,dry:0x9c5c38,dust:0x8c5e44};
 const groundTex=grain(3,170,60),wallTex=grain(8,1,0);
 const terrainMat=new THREE.MeshPhongMaterial({vertexColors:true,map:groundTex,shininess:0,specular:0});
 terrainMat.onBeforeCompile=s=>{s.uniforms.uT=U.t;s.uniforms.uCS=U.cs;
@@ -691,11 +697,12 @@ function wall(ax,c,a0,a1,yb,FH,color,o){
   }
 }
 const ROOFS=[0x6b3a2e,0x4a4f58,0x5a4638,0x394047];
+const MARS_WALLS=[0xe6e9ec,0xd3d8dd,0xc5ccd3,0xe0d9cf,0xcdd2d6];const marsWall=r=>MARS_WALLS[Math.floor(r()*MARS_WALLS.length)];
 function house(x,z,w,d,o){o=o||{};const fl=o.floors||2,FH=o.fh||3,r=rng(Math.round(x*7+z*13)+fl*31);
   const x0=x-w/2,x1=x+w/2,z0=z-d/2,z1=z+d/2,hs=[H(x0,z0),H(x1,z0),H(x0,z1),H(x1,z1)];
   const y0=o.base!==undefined?o.base:Math.max(...hs)+.25,lo=o.base!==undefined?o.base-.3:Math.min(...hs)-1.5;
   bxr(x0-.15,lo,z0-.15,x1+.15,y0,z1+.15,0x6b665e,{walk:true});
-  const color=o.color||0xb9ae98,sides={n:['x',z0+T/2,x0,x1],s:['x',z1-T/2,x0,x1],w:['z',x0+T/2,z0+T,z1-T],e:['z',x1-T/2,z0+T,z1-T]};
+  const color=marsWall(r),sides={n:['x',z0+T/2,x0,x1],s:['x',z1-T/2,x0,x1],w:['z',x0+T/2,z0+T,z1-T],e:['z',x1-T/2,z0+T,z1-T]};
   const acc=o.access||(FH<=3.5&&d>=6.5&&fl+(o.roofAccess?1:0)>1?'stairs':'none'),top=y0+fl*FH;
   for(let f=0;f<fl;f++){const yb=y0+f*FH;
     for(const k in sides){const[ax,c,a0,a1]=sides[k],n=Math.max(1,Math.round((a1-a0)/2.7));
@@ -714,12 +721,21 @@ function house(x,z,w,d,o){o=o||{};const fl=o.floors||2,FH=o.fh||3,r=rng(Math.rou
     if(o.furn!==false&&w>6&&d>6&&FH<4){bx(x1-1.5,yb,z1-1.5,1.1,.8,1.1,0x5d4a36,{kind:'wood'});if(r()<.6)bx(x-.4,yb,z1-.75,1.6,1.7,.6,0x4f4233,{kind:'wood'})}
   }
   if(acc==='ladder')ladder(x0+T+.75,z0+T+.75,y0,y0+(fl-1)*FH+(o.roofAccess?FH:0),-.5);
-  const rc=col(o.roofColor||ROOFS[Math.floor(r()*ROOFS.length)]),wc=col(color),e=.45,roof=o.roof||'gable';
+  const rc=col(o.roofColor||ROOFS[Math.floor(r()*ROOFS.length)]),wc=col(color),e=.45;let roof=o.roof||'gable';if(roof!=='none'&&!o.ruin)roof='mars';
   if(roof==='gable'){const rh=o.rh||Math.min(w,d)*.36,B=L.B;
     if(w>=d){quad(B,x0-e,top,z1+e,x1+e,top,z1+e,x1+e,top+rh,z,x0-e,top+rh,z,rc);quad(B,x1+e,top,z0-e,x0-e,top,z0-e,x0-e,top+rh,z,x1+e,top+rh,z,rc);tri(B,x0,top,z0,x0,top,z1,x0,top+rh,z,wc);tri(B,x1,top,z1,x1,top,z0,x1,top+rh,z,wc)}
     else{quad(B,x1+e,top,z1+e,x1+e,top,z0-e,x,top+rh,z0-e,x,top+rh,z1+e,rc);quad(B,x0-e,top,z0-e,x0-e,top,z1+e,x,top+rh,z1+e,x,top+rh,z0-e,rc);tri(B,x0,top,z0,x1,top,z0,x,top+rh,z0,wc);tri(B,x1,top,z1,x0,top,z1,x,top+rh,z1,wc)}
     if(o.chimney!==false){bx(x+w*.25,top,z+(w>=d?0:d*.2),.7,rh+.9,.7,0x5b4a42,{nocol:true});if(L.def.smoke&&r()<.55)L.emit.push([x+w*.25,top+rh+1.1,z+(w>=d?0:d*.2)])}
   }else if(roof==='pyr'){const rh=o.rh||4,B=L.B;tri(B,x0-e,top,z1+e,x1+e,top,z1+e,x,top+rh,z,rc);tri(B,x1+e,top,z1+e,x1+e,top,z0-e,x,top+rh,z,rc);tri(B,x1+e,top,z0-e,x0-e,top,z0-e,x,top+rh,z,rc);tri(B,x0-e,top,z0-e,x0-e,top,z1+e,x,top+rh,z,rc)}
+  else if(roof==='mars'){
+    for(const[a,b,c2,d2]of[[x0-.2,z0-.2,x1+.2,z0+.25],[x0-.2,z1-.25,x1+.2,z1+.2],[x0-.2,z0-.2,x0+.25,z1+.2],[x1-.25,z0-.2,x1+.2,z1+.2]])bxr(a,top,b,c2,top+.5,d2,0xbfc5cc,{nocol:true});
+    bxr(x0-.3,top-.5,z0-.3,x1+.3,top-.2,z0-.2,0xe4572e,{nocol:true});bxr(x0-.3,top-.5,z1+.2,x1+.3,top-.2,z1+.3,0xe4572e,{nocol:true});
+    const k=r();
+    if(k<.5&&w>6&&d>6){const rw=Math.min(w,d)*.5;bx(x,top,z,rw,.55,rw,0xe9ecef,{nocol:true});bx(x,top+.55,z,rw*.78,.5,rw*.78,0xdfe3e6,{nocol:true});bx(x,top+1.05,z,rw*.52,.45,rw*.52,0xe9ecef,{nocol:true});bx(x,top+1.5,z,rw*.26,.35,rw*.26,0xd0d5da,{nocol:true});bx(x,top+1.85,z,.18,.18,.18,0xff6a3a,{nocol:true})}
+    else{bx(x+w*.18,top,z-d*.18,w*.32,.35,d*.34,0x1c2c4a,{nocol:true});bx(x-w*.2,top,z+d*.15,w*.28,.35,d*.3,0x1c2c4a,{nocol:true});bx(x+w*.18,top+.3,z-d*.18,w*.3,.06,d*.32,0x2e4a7a,{nocol:true})}
+    bx(x+w*.32,top,z+d*.28,.14,3.6+r()*2.4,.14,0xc9ced4,{nocol:true});bx(x+w*.32,top+3.2,z+d*.28,1.2,.12,1.2,0xe9ecef,{nocol:true});bx(x-w*.3,top,z-d*.3,1.1,.9,.9,0xaab1b8,{nocol:true});
+    // light strips on the corners (go dark when the power is cut)
+    const sy0=y0+.4,sy1=top-.4;for(const[cx,cz]of[[x0,z0],[x1,z0],[x0,z1],[x1,z1]])boxGeo(L.GL,cx-.06,sy0,cz-.06,cx+.06,sy1,cz+.06,_c.setRGB(1,.95,.85))}
   else if(roof!=='none'){for(const[a,b,c2,d2]of[[x0,z0,x1,z0+.25],[x0,z1-.25,x1,z1],[x0,z0,x0+.25,z1],[x1-.25,z0,x1,z1]])bxr(a,top,b,c2,top+.55,d2,color)}
   L.bld.push({x0,x1,z0,z1,fl});
   return{x,z,w,d,x0,x1,z0,z1,y0,FH,fy:f=>y0+f*FH,top};
@@ -964,17 +980,34 @@ const LEVELS={
   }},
  pass:PASS_DEF,
 };
+function marsCraters(def){
+  const r=rng(31337+def.name.length*97),pads=def.pads||[],no=def.trees&&def.trees.no||(()=>false),N1=TN+1,st=def.start,ex=def.exfil;
+  const kinds=[[170,5,13],[110,14,30],[50,32,64],[16,64,130]];let placed=0;
+  for(const[cnt,r0,r1]of kinds){for(let i=0;i<cnt*1.6&&placed<cnt+99999;i++){const R=r0+r()*(r1-r0),cx=(r()-.5)*1400,cz=(r()-.5)*1400;
+      if(Math.abs(cx)>700||Math.abs(cz)>700)continue;let bad=false;const m=R*1.5;
+      for(const q of pads)if(Math.hypot(cx-q[0],cz-q[1])<q[2]+q[3]+m){bad=true;break}
+      if(!bad&&(Math.hypot(cx-st[0],cz-st[1])<R+50||Math.hypot(cx-ex[0],cz-ex[1])<R+30))bad=true;
+      if(!bad)for(let a=0;a<8;a++){const px=cx+Math.cos(a*.785)*m,pz=cz+Math.sin(a*.785)*m;if(no(px,pz)||roadDist(px,pz)<R*.8+4){bad=true;break}}
+      if(!bad&&(no(cx,cz)||roadDist(cx,cz)<R+4))bad=true;
+      if(bad)continue;
+      const D=R*(.2+r()*.1),rim=D*.4,reach=R*2.4,ix0=Math.max(0,Math.floor((cx-reach+750)/TC)),ix1=Math.min(TN,Math.ceil((cx+reach+750)/TC)),iz0=Math.max(0,Math.floor((cz-reach+750)/TC)),iz1=Math.min(TN,Math.ceil((cz+reach+750)/TC));
+      for(let iz=iz0;iz<=iz1;iz++)for(let ix=ix0;ix<=ix1;ix++){const px=-750+ix*TC,pz=-750+iz*TC,d=Math.hypot(px-cx,pz-cz);let dh=0;const q=d/R;
+        if(q<1)dh=-D*(1-q*q)*(1-.22*Math.cos(Math.atan2(pz-cz,px-cx)*5+i));
+        const rm=(q-1.06)/.2;dh+=rim*Math.exp(-rm*rm);dh+=rim*.28*Math.exp(-Math.pow((q-1.6)/.5,2));
+        HF[iz*N1+ix]+=dh}
+      placed++}}}
 function buildLevel(id,ov){
   if(L){scene.remove(L.g);L.g.traverse(o=>{if(o.geometry)o.geometry.dispose()})}
   const def=ov?Object.assign(Object.create(LEVELS[id]),ov):LEVELS[id],wl=def.water===null?-99:def.water;
   emitters.length=0;L={id,def,anim:[],emit:[],bld:[],fences:[],towers:[],g:new THREE.Group(),boxes:[],ladders:[],trees:[],barrels:[],glows:[],lights:[],grid:new Map(),treeGrid:new Map(),B:{p:[],c:[],u:[]},GL:{p:[],c:[],u:[]},GD:{p:[],c:[],u:[]},r:rng(11),ref:{},power:true};
   scene.add(L.g);
-  // height field: physics and mesh share the same triangles
+  // height field: physics and mesh share the same triangles (Mars: impact craters of all sizes)
   {const pads=def.pads||[],ph=pads.map(p=>def.gen(p[0],p[1]));HF=new Float32Array((TN+1)*(TN+1));
    for(let iz=0;iz<=TN;iz++)for(let ix=0;ix<=TN;ix++){const x=-750+ix*TC,z=-750+iz*TC;let h=def.gen(x,z);
     for(let k=0;k<pads.length;k++){const p=pads[k],d=Math.hypot(x-p[0],z-p[1]);if(d<p[2]+p[3])h=lerp(h,ph[k],1-smooth(p[2],p[2]+p[3],d))}HF[iz*(TN+1)+ix]=h}
-   const P3=new Float32Array(TN*TN*18),C3=new Float32Array(TN*TN*18),U2=new Float32Array(TN*TN*12),r=rng(7),pl=def.pal;let o=0,q=0;
-   const dust=col(pl.dust),grass=col(pl.grass),dry=col(pl.dry),rock=col(0x77726b),dark=col(0x55514c),pale=col(0xb3b1a8),dirt=col(0x7c6a52),sand=col(0x8f8468),snowC=col(0xeef2f6),c=new THREE.Color();
+   marsCraters(def);
+   const P3=new Float32Array(TN*TN*18),C3=new Float32Array(TN*TN*18),U2=new Float32Array(TN*TN*12),r=rng(7),pl=MARS_PAL;let o=0,q=0;
+   const dust=col(pl.dust),grass=col(pl.grass),dry=col(pl.dry),rock=col(0x5a3d30),dark=col(0x3a2a24),pale=col(0xb88a66),dirt=col(0x8f5a3c),sand=col(0xa56f48),snowC=col(0xeadbd2),c=new THREE.Color();
    const emit=(x0,z0,h0,x1,z1,h1,x2,z2,h2)=>{
     const uy=h1-h0,vy=h2-h0,ux=x1-x0,uz=z1-z0,vx=x2-x0,vz=z2-z0,nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx,sl=Math.abs(ny)/Math.hypot(nx,ny,nz);
     const x=(x0+x1+x2)/3,z=(z0+z1+z2)/3,y=(h0+h1+h2)/3,pt=fbm(x*.02+9,z*.02+4,3);
@@ -989,7 +1022,7 @@ function buildLevel(id,ov){
   if(def.water!==null){const w=new THREE.Mesh(new THREE.PlaneGeometry(3200,3200),waterMat);w.rotation.x=-Math.PI/2;w.position.y=def.water;L.g.add(w)}
   {const N1=TN+1,dd=new Uint8Array(N1*N1*4),w0=def.water===null?0:def.water;for(let i=0;i<N1*N1;i++){const v=clamp((w0-HF[i]+6)/14,0,1)*255;dd[i*4]=dd[i*4+1]=dd[i*4+2]=v;dd[i*4+3]=255}
    const ht=new THREE.DataTexture(dd,N1,N1,THREE.RGBAFormat);ht.magFilter=ht.minFilter=THREE.LinearFilter;ht.generateMipmaps=false;ht.needsUpdate=true;if(waterMat.uniforms.hmap.value)waterMat.uniforms.hmap.value.dispose();waterMat.uniforms.hmap.value=ht}
-  def.build();flock(8,0,-20,170);for(const q of L.emit)addEmitter(q[0],q[1],q[2],{rate:.55,size:.9,col:0xb7b2aa});
+  def.build();for(const q of L.emit)addEmitter(q[0],q[1],q[2],{rate:.55,size:.9,col:0xb7b2aa});
   const rv=rng(42),Tr=def.trees,o=new THREE.Object3D(),c=new THREE.Color();
   // boulders: hard cover
   {const N_=70,bm=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),lam(0x76726b),N_);let k=0;
@@ -1004,18 +1037,15 @@ function buildLevel(id,ov){
     if(Math.abs(H(x+3,z)-H(x-3,z))+Math.abs(H(x,z+3)-H(x,z-3))>5.5)continue;
     const t={x,z,y:h-.3,s:.8+r()*.9,pine:r()<Tr.pine};L.trees.push(t);(t.pine?pines:leafy).push(t);
     const rad=1.8*t.s;for(let cx=Math.floor((x-rad)/TREE_CELL);cx<=Math.floor((x+rad)/TREE_CELL);cx++)for(let cz=Math.floor((z-rad)/TREE_CELL);cz<=Math.floor((z+rad)/TREE_CELL);cz++){const k=cx*4096+cz;(L.treeGrid.get(k)||L.treeGrid.set(k,[]).get(k)).push(t)}}
-   const inst=(list,geos,ca,cb,trunk)=>{if(!list.length)return;const ms=geos.map(g=>new THREE.InstancedMesh(g,swayMat(lam(0xffffff),.35),list.length)),tm=new THREE.InstancedMesh(trunk,lam(0x4a3b2c),list.length),a=col(ca),b=col(cb);
-    list.forEach((t,i)=>{o.position.set(t.x,t.y,t.z);o.scale.set(t.s,t.s*(.9+r()*.3),t.s);o.rotation.set((r()-.5)*.08,r()*6,(r()-.5)*.08);o.updateMatrix();tm.setMatrixAt(i,o.matrix);c.copy(a).lerp(b,r());ms.forEach((m,k)=>{m.setMatrixAt(i,o.matrix);m.setColorAt(i,c.clone().multiplyScalar(1+k*.12))})});
-    for(const m of[tm,...ms]){m.castShadow=m.receiveShadow=true;L.g.add(m)}};
-   const tg=new THREE.CylinderGeometry(.16,.3,3,6);tg.translate(0,1.5,0);
-   const c1=new THREE.ConeGeometry(2.1,3.4,8);c1.translate(0,3.4,0);const c2=new THREE.ConeGeometry(1.55,3,8);c2.translate(0,5.1,0);const c3=new THREE.ConeGeometry(.95,2.6,8);c3.translate(0,6.7,0);
-   inst(pines,[c1,c2,c3],def.snow?0x4d6b5a:0x2f4634,def.snow?0xa9c0b4:0x4b5a36,tg);
-   const l1=new THREE.IcosahedronGeometry(2.3,1);l1.translate(0,4.4,0);const l2=new THREE.IcosahedronGeometry(1.7,1);l2.translate(.9,5.8,.5);const l3=new THREE.IcosahedronGeometry(1.5,0);l3.translate(-1.1,5.2,-.6);
-   inst(leafy,[l1,l2,l3],id==='village'?0x8a7a2e:0x4d6a33,id==='village'?0xa5622a:0x6f7d3a,tg);
-   const rm=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),lam(0x7d7972),260);
+   {const all=pines.concat(leafy),rg=[0,1,2].map(k=>{const g=new THREE.IcosahedronGeometry(1,2),p=g.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),f=1+.2*Math.sin(x*3.1+k*2+y*2.3)*Math.cos(z*2.7+k)+.12*Math.sin(y*5+z*4+k*3)+.06*Math.sin(x*9+z*7);p.setXYZ(i,x*f,y*f*.78,z*f)}g.computeVertexNormals();return g}),
+     ms=rg.map(g=>new THREE.InstancedMesh(g,lam(0xffffff),Math.max(1,all.length))),cnt=[0,0,0],ca=col(0x5c3b2c),cb=col(0x9a6542),cc=col(0x38282a);
+    all.forEach(t=>{const k=Math.floor(r()*3),rs=t.s*(.95+r()*.65);t.rock=true;t.rs=rs;o.position.set(t.x,t.y+rs*.28,t.z);o.scale.set(rs,rs*(.7+r()*.3),rs*(.85+r()*.3));o.rotation.set((r()-.5)*.25,r()*6,(r()-.5)*.25);o.updateMatrix();
+      ms[k].setMatrixAt(cnt[k],o.matrix);c.copy(ca).lerp(r()<.25?cc:cb,r()*.8);ms[k].setColorAt(cnt[k],c);cnt[k]++});
+    ms.forEach((m,k)=>{m.count=cnt[k];m.castShadow=m.receiveShadow=true;L.g.add(m)})}
+   const rm=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),lam(0x6a4a3a),260);
    for(let i=0;i<260;i++){const x=(r()-.5)*1200,z=(r()-.5)*1200,s=.3+r()*.8;o.position.set(x,H(x,z),z);o.scale.set(s,s*.6,s*(.7+r()*.6));o.rotation.set(r(),r()*6,r());o.updateMatrix();rm.setMatrixAt(i,o.matrix)}
    rm.castShadow=rm.receiveShadow=true;L.g.add(rm);
-   const bm=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),swayMat(lam(0xffffff),.5),520),ba=col(0x4d5c33),bb=col(0x76763f);let k=0;
+   const bm=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),lam(0xffffff),520),ba=col(0x4a3226),bb=col(0x7a5238);let k=0;
    for(let i=0;i<5000&&k<520;i++){const x=(r()-.5)*1250,z=(r()-.5)*1250,h=H(x,z);if(h<wl+1||def.dust(x,z)>.2||(Tr.no(x,z)&&r()<.8)||roadDist(x,z)<5)continue;const s=.5+r()*1.1;
     o.position.set(x,h+s*.3,z);o.scale.set(s*1.3,s*.75,s*1.2);o.rotation.set(r(),r()*6,r());o.updateMatrix();bm.setMatrixAt(k,o.matrix);bm.setColorAt(k,c.copy(ba).lerp(bb,r()));k++}
    bm.count=k;bm.castShadow=bm.receiveShadow=true;L.g.add(bm)}
@@ -1031,7 +1061,7 @@ function setSky(k){
   scene.fog.color.copy(col(s.fog));scene.fog.near=s.fn;scene.fog.far=s.ff;
   sun.color.copy(col(s.sun));sun.intensity=s.si;
   hemi.intensity=s.hi;hemi.color.copy(col(s.top)).lerp(new THREE.Color(1,1,1),.35);hemi.groundColor.copy(col(0x5a4a3a));
-  renderer.toneMappingExposure=s.exp;rain.visible=!!s.rain;snowfall.visible=!!s.snow;snowfall.material.size=.032+.014*((s.snow||1)-1);snowfall.material.opacity=Math.min(.95,.8+.07*((s.snow||1)-1));U.cs.value=(k==='night'||k==='snownight'||k==='darknight'||k==='blizzardnight')?0:(k==='storm')?.12:(k==='fog'||k==='snowfog'||k==='whiteout')?0:k==='snow'?.18:.32;
+  renderer.toneMappingExposure=s.exp;rain.visible=!!s.rain;snowfall.visible=!!s.snow;snowfall.material.color.setHex(0xe9cdb8);snowfall.material.size=.032+.014*((s.snow||1)-1);snowfall.material.opacity=Math.min(.95,.8+.07*((s.snow||1)-1));U.cs.value=(k==='night'||k==='snownight'||k==='darknight'||k==='blizzardnight')?0:(k==='storm')?.12:(k==='fog'||k==='snowfog'||k==='whiteout')?0:k==='snow'?.18:.32;
   w.deep.value.copy(col(0x10242c)).lerp(col(s.top),.25);w.skyc.value.copy(col(s.fog)).lerp(col(s.top),.4);w.sunCol.value.copy(u.sunCol.value);w.sunDir.value.copy(sunDir);w.fogC.value.copy(col(s.fog));w.fn.value=s.fn;w.ff.value=s.ff;
   robotMat.envMapIntensity=.3+.7*(1-clamp(s.lamp||0,0,1));blackMat.envMapIntensity=1.4*robotMat.envMapIntensity;
   setPower(L.power);
@@ -1052,7 +1082,7 @@ const grass=(()=>{
   m.frustumCulled=false;m.receiveShadow=true;scene.add(m);return m;
 })();
 const _go=new THREE.Object3D();
-function updateGrass(px,pz){
+function updateGrass(px,pz){if(grass.visible)grass.visible=false;return;
   if(Math.hypot(px-grassX,pz-grassZ)<3)return;grassX=px;grassZ=pz;const wl=L.def.water===null?-99:L.def.water;
   for(let i=0;i<GN;i++){
     let x=grassOff[i*4],z=grassOff[i*4+1];x+=Math.round((px-x)/GT)*GT;z+=Math.round((pz-z)/GT)*GT;
@@ -1134,6 +1164,7 @@ function segHit(a,b,ign){
   if(cb)for(const bx of cb){if(!bx.alive||ign.indexOf(bx)>=0)continue;const t=segBox(a,b,bx);if(t>=0)return{type:'box',box:bx,pos:a.clone().lerp(b,t)}}
   const cell=L.treeGrid.get(Math.floor(b.x/TREE_CELL)*4096+Math.floor(b.z/TREE_CELL));
   if(cell)for(const t of cell){
+    if(t.rock){_p2.set(t.x,t.y+.1,t.z);_q2.set(t.x,t.y+.65*t.rs,t.z);const rr=.9*t.rs;if(segSeg2(a,b,_p2,_q2)<rr*rr)return{type:'tree',pos:b.clone()};continue}
     _p2.set(t.x,t.y,t.z);_q2.set(t.x,t.y+2.6*t.s,t.z);
     if(segSeg2(a,b,_p2,_q2)<.09)return{type:'tree',pos:b.clone()};
     _p2.y=t.y+2.8*t.s;_q2.y=t.y+(t.pine?6.6:6)*t.s;const r=(t.pine?1.05:1.7)*t.s;
@@ -1319,9 +1350,7 @@ function ambient(rt){
   A.lp.frequency.setTargetAtTime(on&&(P.hold||G_.cine)?650:20000,t,.12);
   if(!on)return;
   if(L.def.sea){waveT-=rt;if(waveT<=0){waveT=4.5+Math.random()*3.5;play('wave',{vol:.5*clamp(120/(120+Math.max(0,P.z+40)),.12,1),pan:Math.random()*1.2-.6,amb:true,wet:.2,var:.15})}}
-  ambT-=rt;if(ambT>0)return;const far={amb:true,vol:.05+Math.random()*.12,pan:Math.random()*2-1,wet:.5,lp:3500+Math.random()*5000};
-  if(k==='storm'||curSky.snow)ambT=8;else if(k==='night'){play('owl',far);ambT=14+Math.random()*25}else if(k==='dusk'){play(Math.random()<.5?'crow':'bird1',far);ambT=6+Math.random()*12}
-  else if(L.def.sea){play('gull',far);ambT=5+Math.random()*10}else{play(Math.random()<.15?'crow':'bird'+Math.floor(Math.random()*3),far);ambT=1.2+Math.random()*4}
+  ambT-=rt;if(ambT>0)return;ambT=30
 }
 
 /* snowfall */
@@ -2094,7 +2123,7 @@ function updateVehicle(v,dt){
   v.g.position.copy(v.pos);v.g.rotation.set(v.pitch,v.yaw,v.roll);
   const r=v.truck?2.3:1.7,h=v.truck?3.1:1.9;v.box.min.set(v.pos.x-r,v.pos.y,v.pos.z-r);v.box.max.set(v.pos.x+r,v.pos.y+h,v.pos.z+r);v.box.c.set(v.pos.x,v.pos.y+1,v.pos.z);
 }
-function treeHit(x,z){const c=L.treeGrid.get(Math.floor(x/TREE_CELL)*4096+Math.floor(z/TREE_CELL));if(c)for(const t of c){const dx=t.x-x,dz=t.z-z,r=(t.pine?.5:.6)*t.s+.35;if(dx*dx+dz*dz<r*r)return true}return false}
+function treeHit(x,z,y){const c=L.treeGrid.get(Math.floor(x/TREE_CELL)*4096+Math.floor(z/TREE_CELL));if(c)for(const t of c){const dx=t.x-x,dz=t.z-z,r=t.rock?.85*t.rs+.3:(t.pine?.5:.6)*t.s+.35;if(dx*dx+dz*dz<r*r&&(!t.rock||y===undefined||y<t.y+1.1*t.rs))return true}return false}
 function vehBlocked(v,x,z){const y=v.pos.y;const hw=.85,hl=v.truck?3:2.1,fx=-Math.sin(v.yaw),fz=-Math.cos(v.yaw),rx=Math.cos(v.yaw),rz=-Math.sin(v.yaw);
   for(const[a,b]of[[hl,0],[hl,hw],[hl,-hw],[-hl,0],[0,hw+.2],[0,-hw-.2]]){const px=x+fx*a+rx*b,pz=z+fz*a+rz*b;if(blocked(px,pz,y,.35)||treeHit(px,pz))return true}return false}
 function vehicleControl(v,dt){
@@ -2228,7 +2257,7 @@ function tacticalSpawns(c,S){
 /* bushes: cover that blocks and softens sight lines */
 function scatterBushes(){
   L.hide=[];L.hideGrid=new Map();const r=rng(555+L.id.length*7),def=L.def,wl=def.water===null?-99:def.water,N=def.snow?260:520,st=def.start;
-  const geo=window.__bg||(window.__bg=makeBushGeo()),m=new THREE.InstancedMesh(geo,swayMat(lam(0xffffff),.4),N*2),o=new THREE.Object3D(),cA=col(def.snow?0x6f8a78:0x4f6a2e),cB=col(def.snow?0xdce6ee:0x8a8a3c),cc=new THREE.Color();let k=0;
+  const geo=window.__bg||(window.__bg=makeBushGeo()),m=new THREE.InstancedMesh(geo,lam(0xffffff),N*2),o=new THREE.Object3D(),cA=col(0x4a3226),cB=col(def.snow?0xcfb8a8:0x8a5a3c),cc=new THREE.Color();let k=0;
   for(let i=0;i<N&&k<N*2-3;i++){const cx=(r()-.5)*1250,cz=(r()-.5)*1250,h0=H(cx,cz);if(h0<wl+1||roadDist(cx,cz)<5||Math.hypot(cx-st[0],cz-st[1])<14)continue;
     const nb=1+Math.floor(r()*3);for(let j=0;j<nb;j++){const x=cx+(r()-.5)*5,z=cz+(r()-.5)*5,h=H(x,z),s=.9+r()*1.1;if(blocked(x,z,h,.6)||h<wl+.8)continue;
       o.position.set(x,h+s*.45,z);o.rotation.set(0,r()*6.28,0);o.scale.set(s*1.25,s*.95,s*1.25);o.updateMatrix();m.setMatrixAt(k,o.matrix);m.setColorAt(k,cc.copy(cA).lerp(cB,r()*.6));k++;
@@ -2648,7 +2677,7 @@ const bigmap=$('bigmap'),mc=$('mapcv'),mx=mc.getContext('2d'),mini=$('mini'),mnx
 const gridRef=(x,z)=>String.fromCharCode(65+clamp(Math.floor((x-MX0)/100),0,12))+(clamp(Math.floor((z-MZ0)/100),0,12)+1);
 function buildMapBase(){
   if(MP.lvl===L&&MP.base)return;MP.lvl=L;MP.plan=null;
-  const W=1500,Hh=1500,c=cv(W,Hh),x=c.getContext('2d'),img=x.createImageData(W,Hh),d=img.data,def=L.def,wl=def.water===null?-99:def.water,pl=def.pal;
+  const W=1500,Hh=1500,c=cv(W,Hh),x=c.getContext('2d'),img=x.createImageData(W,Hh),d=img.data,def=L.def,wl=def.water===null?-99:def.water,pl=MARS_PAL;
   const cl=h=>[h>>16&255,h>>8&255,h&255],g0=cl(pl.grass),g1=cl(pl.dry),du=cl(pl.dust),rk=[160,156,146],sn=[176,160,122],hi=[88,128,150],lo=[22,48,68],sw=def.snow?[236,242,248]:null;
   const lx=-.55,ly=.8,lz=-.45,ll=Math.hypot(lx,ly,lz);
   const hh=new Float32Array(W*Hh);for(let j=0;j<Hh;j++)for(let i=0;i<W;i++)hh[j*W+i]=H(BX0+(i+.5)/W*BW,BZ0+(j+.5)/Hh*BW);
@@ -2661,7 +2690,7 @@ function buildMapBase(){
       if(sw){const q=clamp(1-smooth(.5,1.1,Math.hypot(dx,dz)),0,1)*.92;r=lerp(r,sw[0],q);g=lerp(g,sw[1],q);b=lerp(b,sw[2],q)}}
     const f=.55+.62*shd,o=(j*W+i)*4;d[o]=clamp(r*f,0,255);d[o+1]=clamp(g*f,0,255);d[o+2]=clamp(b*f,0,255);d[o+3]=255}
   x.putImageData(img,0,0);
-  x.fillStyle='rgba(22,52,30,.42)';for(const t of L.trees){const px=(t.x-BX0)/BW*W,py=(t.z-BZ0)/BW*Hh;if(px<0||py<0||px>W||py>Hh)continue;x.beginPath();x.arc(px,py,(t.pine?2.1:2.6)*t.s,0,7);x.fill()}
+  x.fillStyle='rgba(40,24,18,.5)';for(const t of L.trees){const px=(t.x-BX0)/BW*W,py=(t.z-BZ0)/BW*Hh;if(px<0||py<0||px>W||py>Hh)continue;x.beginPath();x.arc(px,py,(t.pine?2.1:2.6)*t.s,0,7);x.fill()}
   MP.base=c;MP.W=W;MP.Hh=Hh;
   // vector contours from the same triangles the terrain uses
   const segs={minor:[],major:[],shore:[]},labs=[],ix0=0,ix1=TN,iz0=0,iz1=TN,N1=TN+1;let cnt=0;
@@ -2936,7 +2965,7 @@ $('quality').addEventListener('change',e=>{save.q=+e.target.value;persist();appl
   const lines=['SAT-7 LINK ESTABLISHED','ORBITAL LASER · ONE ROUND CHARGED','CAMERA MISSILE · LOADED','RECON DRONE · BATTERY 100%','13 CONTRACTS · 4 THEATRES','ROBOT GARRISONS · ALL UNITS ONLINE'];let li=0,ci=0,del=false;const st=$('stLine').querySelector('span');
   setInterval(()=>{if(menu.hidden)return;const L_=lines[li];if(!del){ci++;st.textContent=L_.slice(0,ci);if(ci>=L_.length){del=true;ci=L_.length+14}}else{ci--;if(ci<=L_.length)st.textContent=L_.slice(0,Math.max(0,ci));if(ci<=0){del=false;li=(li+1)%lines.length;ci=0}}},55);
   // ticker
-  const items=['WEATHER FRONT OVER ALTHEIM PASS · VISIBILITY 20%','NEW: STARLESS NIGHT OVER KARVEL BASIN','ORBITAL LASER AUTHORISED · ONE STRIKE PER CONTRACT','ROBOT UNITS REPORT AMBER EYES WHEN SUSPICIOUS','RADIO CHECK · ADD YOUR OWN MP3 FILES','GHOST DIFFICULTY PAYS 1.45× FEES','CRATERS REMAIN · PLAN YOUR EXFIL'];
+  const items=['DUST STORM FRONT OVER ALTHEIM PASS · VISIBILITY 20%','STARLESS NIGHT OVER KARVEL BASIN · SURFACE −83 °C','ORBITAL LASER AUTHORISED · ONE STRIKE PER CONTRACT','ROBOT UNITS REPORT AMBER EYES WHEN SUSPICIOUS','RADIO CHECK · ADD YOUR OWN MP3 FILES','GHOST DIFFICULTY PAYS 1.45× FEES','CRATERS REMAIN · PLAN YOUR EXFIL','MARS COLONY 7 · ROBOT GARRISON ON ALERT'];
   const tk=$('tkTrack');if(tk){const row=items.map(s=>'<span>'+s+'</span>').join('');tk.innerHTML=row+row}
   // reveal cards
   window.menuReveal=()=>{const cards=[...document.querySelectorAll('#sheets .sheet')];if(!('IntersectionObserver' in window)){cards.forEach(c=>c.classList.add('in'));return}
@@ -3092,7 +3121,7 @@ function droneEnd(msg,crash,quiet){if(!BUSY())return;DR.on=false;keys.KeyQ=keys.
   if(!quiet&&msg)feed(msg)}
 function droneBlocked(x,y,z){
   const c=cellAt(x,z);if(c)for(const b of c)if(b.alive&&x>b.min.x-.4&&x<b.max.x+.4&&z>b.min.z-.4&&z<b.max.z+.4&&y>b.min.y-.4&&y<b.max.y+.4)return true;
-  if(y<H(x,z)+.5)return true;if(y<H(x,z)+11&&treeHit(x,z))return true;return false}
+  if(y<H(x,z)+.5)return true;if(y<H(x,z)+11&&treeHit(x,z,y))return true;return false}
 /* units shoot at a drone they see: the closer it is, the better they hit; fast drones are harder */
 function droneShot(e,d,spd){_eye.set(e.pos.x,e.pos.y+1.5,e.pos.z);const pr=clamp(.78*Math.pow(1-d/Math.max(60,e.fireR),1.3)+.04,.04,.82)*clamp(1-spd/55,.35,1);
   tracer(_eye.clone(),DR.pos.clone());sfx.enemy(d/343,false,panTo(e.pos));puff(_eye,0xffd9a0,.5,1,0,true,.12);
@@ -3395,7 +3424,7 @@ function mslDetonate(){if(!MSL.fly||MSL.dead)return;missileBlast(MSL.pos.clone()
 function mslHit(p){
   if(p.y<H(p.x,p.z)+.35)return true;
   const c=cellAt(p.x,p.z);if(c)for(const b of c)if(b.alive&&p.x>b.min.x-.25&&p.x<b.max.x+.25&&p.z>b.min.z-.25&&p.z<b.max.z+.25&&p.y>b.min.y-.25&&p.y<b.max.y+.25)return true;
-  if(p.y<H(p.x,p.z)+11&&treeHit(p.x,p.z))return true;
+  if(p.y<H(p.x,p.z)+11&&treeHit(p.x,p.z,p.y))return true;
   for(const e of enemies){if(e.state==='dead'||e.state==='gone'||e.state==='ride')continue;if(Math.abs(e.pos.x-p.x)<1.4&&Math.abs(e.pos.z-p.z)<1.4&&p.y>e.pos.y-.2&&p.y<e.pos.y+2.1)return true}
   for(const v of vehicles)if(!v.dead&&Math.hypot(v.pos.x-p.x,v.pos.z-p.z)<3.2&&p.y<v.pos.y+3.5)return true;
   return false}

@@ -1,5 +1,7 @@
 # Cold Meridian
 
+**Setting:** eine Marskolonie. Rostrote Wüste mit Mondkratern in allen Größen (von wenigen Metern bis über 100 m), Felsbrocken statt Bäumen, weiße Kolonie-Module mit Kuppeln, Antennen, Solarfeldern und Lichtleisten, keine Vögel. Du bist der einzige Mensch, alle Gegner sind Roboter.
+
 Ein 3D-Scharfschützenspiel für den Browser, in einer einzigen HTML-Datei (`cold-meridian.html`). Kein Build, keine Assets: Gelände, Gebäude, Figuren und der komplette Ton werden beim Start im Browser erzeugt. Das Spiel ist von Spielen wie *Sniper Ghost Warrior Contracts* inspiriert, aber eigenständig (eigene Welt, Figuren, Aufträge).
 
 ## Starten
