@@ -69,7 +69,7 @@ Wird automatisch erkannt. Fast unsichtbar: Tasten sind nur schwach eingeblendet.
 
 ## Radio
 
-`O` öffnet einen kleinen Musikplayer (Wiedergabe, Vor/Zurück, Zufall, Suchleiste, Titelliste) mit den Spheric-Lounge-Tracks, die per Stream von enzocage.de geladen werden (Internet nötig). Zwei Regler stellen Musik- und FX-Lautstärke getrennt ein; beide werden gespeichert. Auf dem Handy öffnet die Taste ♪ oben in der Mitte den Player.
+`O` öffnet einen kleinen Musikplayer (Wiedergabe, Vor/Zurück, Zufall, Suchleiste, Titelliste) mit den Spheric-Lounge-Tracks, die per Stream von enzocage.de geladen werden (Internet nötig). Falls der Stream blockiert ist (zum Beispiel in der Artefakt-Vorschau, die fremde Medien-Server sperrt), schaltet der Player automatisch auf einen eingebauten, generativen Ambient-Kanal um, der ohne Netz läuft. Zwei Regler stellen Musik- und FX-Lautstärke getrennt ein; beide werden gespeichert. Auf dem Handy öffnet die Taste ♪ oben in der Mitte den Player.
 
 ## Technik
 
