@@ -25,7 +25,8 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | `1` `2` `3` | Standard-, panzerbrechende, Lockmunition |
 | `C` `X` `Leertaste` | Hocken, Liegen, Aufstehen |
 | Linksklick / `R` | Schießen / Nachladen |
-| `Tab` / `M` | Taktische Karte |
+| `G` | Jeep einsteigen / aussteigen (Fahren: `W A S D`, `Leertaste` bremst, `Shift` Boost) |
+| `Tab` / `M` | Übersichtskarte (zoombar, mit Namen, Schussplätzen und Routen) |
 | `B` | Verbandspäckchen |
 | `H` / `F1` | Hilfe (Feldhandbuch) |
 | `Esc` | Pause |
@@ -35,6 +36,9 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 * **Ballistik:** Geschosse haben Flugzeit, Luftwiderstand, Fall und Winddrift. Entfernung messen, Nullpunkt wählen, mit dem Mil-Absehen vorhalten.
 * **Tarnung:** Lärm, Leichen, Sichtlinie und Haltung füllen die Entdeckungsanzeige. Donner, Kirchenglocke und Schiffshorn überdecken einen Schuss; mit Schalldämpfer ist man nur im Umkreis hörbar. Sirenen und Generatoren lassen sich ausschalten.
 * **Aufträge:** mehrere Ziele pro Auftrag, Reihenfolge-Abhängigkeiten, Fahrzeuge, Zeitlimits, optionale Zusatzziele und Boni. Zivilisten kosten Geld.
+* **Gegner-KI:** Gegner suchen Deckung, rücken von Deckung zu Deckung vor, lugen aus der Deckung, flankieren, funken sich Hinweise zu (Reichweite sinkt, wenn das Relais zerstört ist) und durchsuchen die letzte bekannte Position. Beim Aufspüren einer Leiche oder eines Schusses verstecken sich Wachen, statt zu stürmen.
+* **Versteckte Scharfschützen:** getarnte Schützen liegen im Gelände. Ein Schuss von ihnen erscheint als roter Punkt auf dem Kompass; nach einem Schuss wechseln sie die Stellung.
+* **Fahrzeuge:** eigener Jeep (befahrbar, überfährt Gegner), Patrouillenfahrzeuge der Gegner, die bei Alarm absitzen, und ein Verstärkungs-Lkw nach einem Sirenenalarm.
 * **Welt:** begehbare Häuser mit Treppen, Leitern, Balkonen und Dächern; Wasser, Wetter, Tag und Nacht.
 * **Ausrüstung:** Nach jedem Auftrag lassen sich Schalldämpfer, Zielfernrohr, Schaft und Munitionstasche kaufen. Der Spielstand liegt im `localStorage` des Browsers.
 
@@ -45,6 +49,10 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | Karvel Basin (Söldnerhof im Hochland) | Ledger, Dead Air |
 | Sankt Varga (Dorf am Fluss, Burgruine) | Vespers, House Call |
 | Grimsvik Harbour (Frachthafen, Klippen) | Dry Dock, Lantern |
+
+## Karte und Hilfe
+
+`Tab` öffnet die Übersichtskarte: Höhenlinien, Raster, Benennungen, berechnete Schussplätze (V1, V2) mit Reichweite, deckungsorientierte Schleichroute, Aufklärungszonen der Ziele und Strategietipps. Mausrad zoomt, Ziehen verschiebt, Klick setzt einen Wegpunkt. `H` öffnet das Feldhandbuch (steht auch auf dem Startbildschirm).
 
 ## Technik
 
