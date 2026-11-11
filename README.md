@@ -26,6 +26,8 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | `C` `X` `Leertaste` | Hocken, Liegen, Aufstehen; `Leertaste` im Stehen springt (ca. 1,3 m) |
 | Linksklick / `R` | Schießen / Nachladen |
 | `T` | Aufklärungsdrohne mit Videobild (ca. 1 Minute Akku, lädt in unter einer Minute nach): `W A S D` fliegen, `Q` hoch, `E` runter, `Shift` schneller, Maus schaut, Klick markiert die Einheit im Bild. Zu nahe an Einheiten lösen Alarm aus. |
+| `J` | Orbitallaser: Satellitenansicht, Mausrad zoomt bis auf Straßenhöhe, Ziehen/`W A S D` verschiebt, Klick setzt das Kreuz, `Enter` feuert. Einmal pro Auftrag, mindestens 280 m von dir entfernt. Vernichtet alles im Umkreis von ca. 210 m (Pilzwolke, Druckwelle, Krater bleibt). |
+| `N` | Kamera-Rakete: `N` schärft, Linksklick startet (einmal pro Auftrag). Lenken mit Maus oder `A D`, `Q E` Neigung, `W S` Tempo. Das Kamerabild rauscht und verliert mit der Entfernung das Signal. Einschlag zerstört Gebäude im Umkreis von 30 m und tötet Einheiten im Umkreis von 45 m. |
 | `L` | Scheinwerfer des Jeeps (standardmäßig aus; im Dunkeln oder Nebel ist der Jeep ohne Licht kaum zu sehen) |
 | `G` | Jeep einsteigen / aussteigen (Fahren: `W A S D`, `Leertaste` bremst, `Shift` Boost) |
 | `Tab` / `M` | Übersichtskarte (zoombar, mit Namen, Schussplätzen und Routen) |
@@ -75,7 +77,7 @@ Dazu fünf Nacht- und Winter-Varianten auf denselben Karten: Blackout (sternenlo
 
 ## Radio
 
-`O` öffnet einen kleinen Musikplayer (Wiedergabe, Vor/Zurück, Zufall, Suchleiste, Titelliste) mit den Spheric-Lounge-Tracks, die per Stream von enzocage.de geladen werden (Internet nötig). Falls der Stream blockiert ist (zum Beispiel in der Artefakt-Vorschau, die fremde Medien-Server sperrt), schaltet der Player automatisch auf einen eingebauten, generativen Ambient-Kanal um, der ohne Netz läuft. Zwei Regler stellen Musik- und FX-Lautstärke getrennt ein (Standard 20 % Musik, 80 % FX); beide werden gespeichert. Zu Beginn jedes Auftrags startet automatisch ein zufälliger Titel (nach manuellem Pausieren nicht mehr). Auf dem Handy öffnet die Taste ♪ oben in der Mitte den Player.
+`O` öffnet einen kleinen Musikplayer (Wiedergabe, Vor/Zurück, Zufall, Suchleiste, Titelliste). Mit **＋** (oder per Drag & Drop auf den Player) fügst du eigene MP3-Dateien hinzu; sie bleiben auf diesem Gerät gespeichert und spielen überall. Zusätzlich liegt die Spheric-Lounge-Playlist von enzocage.de als Stream bereit; das funktioniert nur, wo der Viewer externe Medien erlaubt (zum Beispiel in der lokal geöffneten Datei, nicht in der Artefakt-Vorschau). Zwei Regler stellen Musik- und FX-Lautstärke getrennt ein (Standard 20 % Musik, 80 % FX). Zu Beginn jedes Auftrags startet automatisch ein zufälliger Titel (nach manuellem Pausieren nicht mehr). Auf dem Handy öffnet die Taste ♪ oben in der Mitte den Player.
 
 ## Technik
 
