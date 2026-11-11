@@ -75,7 +75,9 @@ Auf dem Startbildschirm gibt es drei Stufen: **Recruit** (langsamere Entdeckung,
 | Grimsvik Harbour (Frachthafen, Klippen) | Dry Dock, Lantern |
 | Altheim Pass (Schnee, Bahnlinie, Kloster) | Last Carriage (fahrender Zug), Cloister (Schneesturm, Seilbahn), Whiteout (Blizzard mit Nebel, unter 100 m Sicht) |
 
-Dazu fünf Nacht- und Winter-Varianten auf denselben Karten: Blackout (sternenlose Nacht, Karvel), Winter Bell (Schneetag, Sankt Varga), Pale Harbour (Winternebel, Grimsvik), Long Night (Nachtblizzard, Grimsvik) und Whiteout (Altheim). Alle 13 Aufträge haben Vorschaubilder auf dem Startbildschirm.
+Zwei zusätzliche Marsbasen mit je zwei Aufträgen: Olympus Rim (Kolonie in einem Riesenkrater: Rim Station, Dust Relay) und Valles Station (Canyon-Kolonie um einen Eiskanal: Canyon Broker, Blackout Dome), mit Solarfeldern, Landeplätzen samt Shuttle, Wohnmodulen und Radarfeldern.
+
+Dazu fünf Nacht- und Winter-Varianten auf denselben Karten: Blackout (sternenlose Nacht, Karvel), Winter Bell (Schneetag, Sankt Varga), Pale Harbour (Winternebel, Grimsvik), Long Night (Nachtblizzard, Grimsvik) und Whiteout (Altheim). Alle 17 Aufträge haben Vorschaubilder auf dem Startbildschirm.
 
 ## Karte und Hilfe
 
