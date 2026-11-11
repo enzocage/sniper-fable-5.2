@@ -49,6 +49,7 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | Karvel Basin (Söldnerhof im Hochland) | Ledger, Dead Air |
 | Sankt Varga (Dorf am Fluss, Burgruine) | Vespers, House Call |
 | Grimsvik Harbour (Frachthafen, Klippen) | Dry Dock, Lantern |
+| Altheim Pass (Schnee, Bahnlinie, Kloster) | Last Carriage (fahrender Zug), Cloister (Schneesturm, Seilbahn) |
 
 ## Karte und Hilfe
 
