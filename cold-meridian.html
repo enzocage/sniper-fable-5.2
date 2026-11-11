@@ -1,4 +1,5 @@
 <title>Cold Meridian</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700;800&family=Saira:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -2554,6 +2555,131 @@ function step(now,nr){
 buildLevel('basin');setSky('dawn');setupMap();setupHelp();applyQuality();camera.fov=55;camera.updateProjectionMatrix();renderMenu();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawTopo);
 requestAnimationFrame(frame);
-window.__cm={beginAct,killEnemy,checkObjectives,objPos,dbg:()=>({scene,snowfall,SKIES,setSky,renderer,camera,puffs,decals,emitters}),raiseAlarm,alertEnemy,callReinforcements,useVehicle,pickCover,adv:(n,k)=>{for(const c of k||[])keys[c]=true;for(let i=0;i<n&&G_.state==='play';i++)step(last+16.7,true);for(const c of k||[])keys[c]=false},audio:()=>A.c?Object.keys(A.B).length:-1,vehicles:()=>vehicles,G:()=>G_,player,enemies:()=>enemies,fire,H:(x,z)=>H(x,z),start:startContract,L:()=>L,groundAt};
+/* ================= touch controls ================= */
+const IS_TOUCH=(matchMedia('(pointer:coarse)').matches&&(navigator.maxTouchPoints>0||'ontouchstart' in window))||/[?&]touch\b/.test(location.search);
+if(IS_TOUCH){(function(){
+  document.body.classList.add('touch');noLock=true;lock=function(){};unlock=function(){};
+  const tc=document.createElement('div');tc.id='tc';
+  tc.innerHTML='<div id="tjoy"><i></i></div><div id="trot" hidden>Rotate your device to landscape</div>'+
+  '<div class="tb big" id="tfire" data-a="fire"><b>◎</b></div>'+
+  '<div class="tb mid" id="tscope" data-a="scope"><b>⌖</b></div>'+
+  '<div class="tb mid" id="treload" data-a="reload"><b>↻</b><s>R</s></div>'+
+  '<div class="tcol" id="tcol"><div class="tb sm" data-a="stance"><b>▂</b><s>STANCE</s></div><div class="tb sm" data-a="veh"><b>⛟</b><s>JEEP</s></div>'+
+   '<div class="tb sm" data-a="ammo"><b>●</b><s>AMMO</s></div><div class="tb sm" data-a="med"><b>✚</b><s>MED</s></div></div>'+
+  '<div class="tcol" id="tcs" hidden><div class="tb sm" data-a="breath"><b>≋</b><s>BREATH</s></div><div class="tb sm" data-a="zin"><b>+</b><s>ZOOM</s></div>'+
+   '<div class="tb sm" data-a="zup"><b>▴</b><s>ZERO</s></div><div class="tb sm" data-a="zout"><b>−</b><s>ZOOM</s></div><div class="tb sm" data-a="zdn"><b>▾</b><s>ZERO</s></div></div>'+
+  '<div class="tb sm" id="tbrake" data-a="brake" hidden><b>■</b><s>BRAKE</s></div>'+
+  '<div class="trow"><div class="tb sm" data-a="map"><b>▦</b><s>MAP</s></div><div class="tb sm" data-a="help"><b>?</b><s>HELP</s></div><div class="tb sm" data-a="pause"><b>Ⅱ</b></div></div>';
+  document.body.appendChild(tc);
+  const st=document.createElement('style');st.textContent=`
+  body.touch{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:none}
+  body.touch #menu,body.touch #help,body.touch #result,body.touch #pause,body.touch #bigmap{touch-action:pan-y}
+  body.touch #bigmap canvas,body.touch #mapcv{touch-action:none}
+  #tc{position:fixed;inset:0;z-index:4;display:none;touch-action:none;-webkit-tap-highlight-color:transparent}
+  #tc.on{display:block}
+  #tc .tb{position:absolute;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.14);opacity:.34;transition:opacity .12s,background .12s,transform .08s;touch-action:none;font-family:var(--mono,monospace)}
+  #tc .tb b{font-weight:400;line-height:1;pointer-events:none}#tc .tb s{text-decoration:none;font-size:7px;letter-spacing:.08em;opacity:.8;margin-top:1px;pointer-events:none}
+  #tc .tb.on{opacity:.9;background:rgba(255,255,255,.22);transform:scale(.93)}
+  #tc .tb[hidden]{display:none}
+  #tc .big{width:min(25vmin,150px);height:min(25vmin,150px);right:max(3vmin,env(safe-area-inset-right,0px));bottom:max(6vmin,env(safe-area-inset-bottom,0px));opacity:.26}#tc .big b{font-size:min(12vmin,70px)}
+  #tc .mid{width:min(15vmin,92px);height:min(15vmin,92px)}#tc .mid b{font-size:min(7vmin,40px)}
+  #tscope{right:max(4vmin,env(safe-area-inset-right,0px));bottom:calc(max(6vmin,env(safe-area-inset-bottom,0px)) + min(27vmin,160px))}
+  #treload{right:calc(max(3vmin,env(safe-area-inset-right,0px)) + min(27vmin,160px));bottom:max(5vmin,env(safe-area-inset-bottom,0px))}
+  #tc .sm{width:min(9.5vmin,56px);height:min(9.5vmin,56px)}#tc .sm b{font-size:min(4.6vmin,26px)}
+  #tc .tcol{position:absolute;right:calc(max(3vmin,env(safe-area-inset-right,0px)) + min(30vmin,170px));top:calc(122px + env(safe-area-inset-top,0px));display:grid;grid-template-columns:repeat(2,auto);gap:1.6vmin;pointer-events:none}
+  #tc .tcol[hidden]{display:none}#tc .tcol .tb{position:relative;pointer-events:auto}
+  .trow{position:absolute;left:50%;transform:translateX(-50%);top:calc(max(1.4vmin,env(safe-area-inset-top,0px)) + 72px);display:flex;gap:2vmin;pointer-events:none}
+  #tc .trow .tb{position:relative;pointer-events:auto;opacity:.26}
+  #tbrake{left:max(3vmin,env(safe-area-inset-left,0px));bottom:calc(max(5vmin,env(safe-area-inset-bottom,0px)) + min(34vmin,200px));width:min(14vmin,84px);height:min(14vmin,84px)}
+  #tjoy{position:absolute;width:0;height:0;display:none}#tjoy.on{display:block}
+  #tjoy:before{content:"";position:absolute;width:var(--jr);height:var(--jr);left:calc(var(--jr)/-2);top:calc(var(--jr)/-2);border-radius:50%;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.03)}
+  #tjoy i{position:absolute;width:calc(var(--jr)*.42);height:calc(var(--jr)*.42);margin:calc(var(--jr)*-.21) 0 0 calc(var(--jr)*-.21);border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3)}
+  #trot{position:fixed;inset:0;background:rgba(8,11,15,.94);color:#ddd6c6;display:flex;align-items:center;justify-content:center;font:600 20px/1.3 var(--display,sans-serif);letter-spacing:.1em;text-transform:uppercase;text-align:center;z-index:30;padding:20px}#trot[hidden]{display:none}
+  body.touch #mini{width:96px;height:96px;opacity:.85}
+  body.touch #gun{right:auto;bottom:calc(70px + env(safe-area-inset-bottom,0px));left:max(16px,env(safe-area-inset-left,0px));text-align:left;font-size:11px}body.touch #gun b{font-size:24px}
+  body.touch #drive em{display:none}body.touch #vit{width:150px}
+  body.touch #objs{font-size:11px;max-width:230px}
+  `;document.head.appendChild(st);
+  let vp=document.querySelector('meta[name=viewport]');if(!vp){vp=document.createElement('meta');vp.name='viewport';document.head.appendChild(vp)}vp.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';
+  const $t=id=>document.getElementById(id),P=player;
+  const kd=c=>dispatchEvent(new KeyboardEvent('keydown',{code:c,bubbles:true})),ku=c=>dispatchEvent(new KeyboardEvent('keyup',{code:c,bubbles:true})),tap=c=>{kd(c);ku(c)};
+  /* ---- movement joystick (floating, left half) + look (right half) ---- */
+  const joy=$t('tjoy'),jk=joy.firstElementChild;let J=null,jr=110;
+  const MV_KEYS=['KeyW','KeyA','KeyS','KeyD'];
+  let breathHeld=false;function setMove(fw,bk,lf,rt,sp){keys.KeyW=fw;keys.KeyS=bk;keys.KeyA=lf;keys.KeyD=rt;keys.ShiftLeft=(sp&&!P.scoped)||breathHeld}
+  function joyUpdate(x,y){const dx=x-J.ox,dy=y-J.oy,m=Math.hypot(dx,dy),R=jr/2;
+    if(m>R*1.7){const k=(m-R*1.7)/m;J.ox+=dx*k;J.oy+=dy*k}
+    const ddx=x-J.ox,ddy=y-J.oy,mm=Math.hypot(ddx,ddy),c=Math.min(mm,R),ux=mm?ddx/mm:0,uy=mm?ddy/mm:0;
+    joy.style.left=J.ox+'px';joy.style.top=J.oy+'px';jk.style.transform='translate('+ux*c+'px,'+uy*c+'px)';
+    const mag=mm/R,vx=ux*Math.min(mag,1),vy=uy*Math.min(mag,1);
+    setMove(mag>.22&&vy<-.32,mag>.22&&vy>.32,mag>.22&&vx<-.4,mag>.22&&vx>.4,mag>1.3&&vy<-.3)}
+  function joyEnd(){J=null;joy.classList.remove('on');setMove(false,false,false,false,false)}
+  /* ---- look ---- */
+  const looks=new Map();let lastTap=0,lastTapX=0,lastTapY=0;
+  function tLook(dx,dy){if(G_.state!=='play')return;const sp=Math.hypot(dx,dy),g=1+Math.min(sp/22,.9);
+    if(P.veh){P.drOff=clamp((P.drOff||0)-dx*.006*save.sens,-2.6,2.6);return}
+    const s=.0036*camera.fov/60*save.sens*g;P.yaw-=dx*s;P.pitch=clamp(P.pitch-dy*s,-1.4,1.4)}
+  function scopeToggle(){if(P.veh||G_.state!=='play')return;P.scoped=!P.scoped;if(P.scoped&&navigator.vibrate)try{navigator.vibrate(8)}catch(e){}}
+  addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse'||G_.state!=='play'||e.target.closest&&e.target.closest('.tb'))return;
+    if(!(e.target===canvas||e.target===tc||tc.contains(e.target)||e.target.closest&&e.target.closest('#hud')))return;
+    const left=e.clientX<innerWidth*.42&&e.clientY>innerHeight*.18;
+    if(left&&!J){J={id:e.pointerId,ox:e.clientX,oy:e.clientY};jr=Math.max(88,Math.min(140,Math.min(innerWidth,innerHeight)*.3));joy.style.setProperty('--jr',jr+'px');joy.classList.add('on');joyUpdate(e.clientX,e.clientY)}
+    else if(!left||J){looks.set(e.pointerId,{x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY,t:performance.now()})}
+  },{passive:true});
+  addEventListener('pointermove',e=>{
+    if(J&&e.pointerId===J.id){joyUpdate(e.clientX,e.clientY);return}
+    const l=looks.get(e.pointerId);if(l){tLook(e.clientX-l.x,e.clientY-l.y);l.x=e.clientX;l.y=e.clientY}
+  },{passive:true});
+  function pend(e){if(J&&e.pointerId===J.id)joyEnd();const l=looks.get(e.pointerId);
+    if(l){looks.delete(e.pointerId);const now=performance.now();
+      if(e.type==='pointerup'&&Math.hypot(e.clientX-l.x0,e.clientY-l.y0)<14&&now-l.t<260){if(now-lastTap<340&&Math.hypot(e.clientX-lastTapX,e.clientY-lastTapY)<60){scopeToggle();lastTap=0}else{lastTap=now;lastTapX=e.clientX;lastTapY=e.clientY}}}}
+  addEventListener('pointerup',pend);addEventListener('pointercancel',pend);
+  /* ---- buttons ---- */
+  const held={};
+  function act(a,down,e){
+    if(G_.state!=='play'&&!(a==='pause'||a==='help'||!down))return;
+    switch(a){
+      case 'fire':if(down&&G_.state==='play'){if(P.veh)return;fire()}break;
+      case 'scope':if(down)scopeToggle();break;
+      case 'reload':if(down&&!P.veh)tap('KeyR');break;
+      case 'breath':breathHeld=down;keys.ShiftLeft=down;break;
+      case 'zin':if(down&&P.scoped)P.zoom=clamp(P.zoom*1.25,4,save.up.optic?16:10);break;
+      case 'zout':if(down&&P.scoped)P.zoom=clamp(P.zoom/1.25,4,save.up.optic?16:10);break;
+      case 'stance':if(down)tap(P.stance===0?'KeyC':P.stance===1?'KeyX':'Space');break;
+      case 'veh':if(down)tap('KeyG');break;
+      case 'ammo':if(down){const n=(P.type+1)%3;let k=n;for(let i=0;i<3;i++){const c=(P.type+1+i)%3;if(P.pool[AMMO[c].k]>0){k=c;break}}tap('Digit'+(k+1))}break;
+      case 'med':if(down)tap('KeyB');break;
+      case 'zup':if(down)tap('KeyE');break;
+      case 'zdn':if(down)tap('KeyQ');break;
+      case 'brake':keys.Space=down;break;
+      case 'map':if(down)toggleMap(true);break;
+      case 'help':if(down)openHelp();break;
+      case 'pause':if(down)pause();break;
+    }}
+  tc.addEventListener('pointerdown',e=>{const b=e.target.closest('.tb');if(!b)return;e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(_){}
+    b.classList.add('on');held[e.pointerId]={b,x:e.clientX,y:e.clientY};act(b.dataset.a,true,e);if(navigator.vibrate&&b.dataset.a==='fire')try{navigator.vibrate(12)}catch(_){}});
+  tc.addEventListener('pointermove',e=>{const h=held[e.pointerId];if(!h)return;if(h.b.dataset.a==='fire'){tLook(e.clientX-h.x,e.clientY-h.y);h.x=e.clientX;h.y=e.clientY}});
+  const bend=e=>{const h=held[e.pointerId];if(!h)return;delete held[e.pointerId];h.b.classList.remove('on');act(h.b.dataset.a,false,e)};
+  tc.addEventListener('pointerup',bend);tc.addEventListener('pointercancel',bend);
+  /* ---- context + orientation ---- */
+  const rot=$t('trot');let fsTried=false;
+  function ctx(){const play=G_.state==='play';tc.classList.toggle('on',play&&!G_.cine&&$('help').hidden);
+    if(!play&&J)joyEnd();
+    $t('tcs').hidden=!P.scoped;$t('tcol').hidden=P.scoped;$t('tbrake').hidden=!P.veh;
+    $t('tscope').style.display=P.veh?'none':'';$t('treload').style.display=P.veh?'none':'';$t('tfire').style.display=P.veh?'none':'';
+    const portrait=innerHeight>innerWidth*1.05&&G_.state!=='menu';rot.hidden=!portrait;
+    document.body.classList.toggle('scopedt',P.scoped)}
+  setInterval(ctx,120);
+  addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'||fsTried||G_.state!=='play')return;fsTried=true;try{const d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d);screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})}catch(_){}} ,{passive:true});
+  /* ---- map: pinch zoom ---- */
+  const mc=$t('mapcv')||document.querySelector('#bigmap canvas');
+  if(mc){const pts=new Map();let d0=0,s0=1;
+    mc.addEventListener('pointerdown',e=>{pts.set(e.pointerId,[e.clientX,e.clientY]);if(pts.size===2){const [a,b]=[...pts.values()];d0=Math.hypot(a[0]-b[0],a[1]-b[1]);s0=MP.view.s;if(MP.drag)MP.drag.moved=99}},true);
+    mc.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,[e.clientX,e.clientY]);if(pts.size===2&&d0>10){const [a,b]=[...pts.values()];MP.view.s=clamp(s0*Math.hypot(a[0]-b[0],a[1]-b[1])/d0,MP.fit,MP.fit*16);clampView()}},true);
+    const pe=e=>{pts.delete(e.pointerId);if(pts.size<2)d0=0};mc.addEventListener('pointerup',pe,true);mc.addEventListener('pointercancel',pe,true)}
+})()}
+
+window.__cm={keys,beginAct,killEnemy,checkObjectives,objPos,dbg:()=>({scene,snowfall,SKIES,setSky,renderer,camera,puffs,decals,emitters}),raiseAlarm,alertEnemy,callReinforcements,useVehicle,pickCover,adv:(n,k)=>{for(const c of k||[])keys[c]=true;for(let i=0;i<n&&G_.state==='play';i++)step(last+16.7,true);for(const c of k||[])keys[c]=false},audio:()=>A.c?Object.keys(A.B).length:-1,vehicles:()=>vehicles,G:()=>G_,player,enemies:()=>enemies,fire,H:(x,z)=>H(x,z),start:startContract,L:()=>L,groundAt};
 })();
 </script>

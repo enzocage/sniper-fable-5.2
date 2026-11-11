@@ -31,6 +31,16 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | `H` / `F1` | Hilfe (Feldhandbuch) |
 | `Esc` | Pause |
 
+### Touch-Steuerung (Handy/Tablet, Querformat)
+
+Wird automatisch erkannt. Fast unsichtbar: Tasten sind nur schwach eingeblendet.
+
+* **Links irgendwo wischen:** schwebender Joystick (Ring erscheint unter dem Daumen). Weit über den Ring hinaus ziehen = Sprint.
+* **Rechts wischen:** umsehen (schnelle Wischer werden leicht beschleunigt). **Doppeltippen:** Zielfernrohr.
+* **Großer Ring unten rechts:** Schuss. Der Daumen darf darauf liegen bleiben und weiter zielen.
+* **Weitere Tasten:** Zielfernrohr, Nachladen, Haltung (Stehen/Hocken/Liegen), Jeep, Munition, Verband; im Zielfernrohr Luft anhalten, Zoom ±, Absehen ±; im Fahrzeug Bremse. Oben mittig: Karte, Hilfe, Pause.
+* Karte: Pinch zum Zoomen, ein Finger verschiebt. Vollbild und Querformat werden beim ersten Tippen angefordert. Zum Testen am Desktop: `?touch` an die URL hängen.
+
 ## Spielprinzip
 
 * **Ballistik:** Geschosse haben Flugzeit, Luftwiderstand, Fall und Winddrift. Entfernung messen, Nullpunkt wählen, mit dem Mil-Absehen vorhalten.
