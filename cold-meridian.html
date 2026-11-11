@@ -196,6 +196,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-
         <div><p class="label" id="topolabel">Survey sheet · 10 m contours</p><canvas id="topo" width="680" height="680"></canvas></div>
         <div><p class="label">Rifle fittings</p><div class="kit" id="kit"></div></div>
         <label class="assist"><input type="checkbox" id="assist" checked><span>Show the predicted impact point while holding breath. Turn it off to read drop and wind yourself.</span></label>
+        <label class="sens"><span>Graphics</span><select id="quality"><option value="0">Low (fast)</option><option value="1">Medium</option><option value="2">High</option></select></label>
         <label class="sens"><span>Mouse speed</span><input type="range" id="sens" min="0.4" max="2" step="0.1" value="1"></label>
         <div><p class="label">Controls</p>
           <dl class="keys">
@@ -316,7 +317,7 @@ function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t
 const money=n=>(n<0?'-$':'$')+Math.abs(n).toLocaleString('en-US');
 const col=h=>new THREE.Color(h).convertSRGBToLinear();
 
-let save={cash:0,done:{},up:{},assist:true,sens:1};
+let save={cash:0,done:{},up:{},assist:true,sens:1,q:1};
 try{const s=JSON.parse(localStorage.getItem('coldmeridian.v1'));if(s)save=Object.assign(save,s)}catch(e){}
 const persist=()=>{try{localStorage.setItem('coldmeridian.v1',JSON.stringify(save))}catch(e){}};
 
@@ -844,7 +845,7 @@ function updateGrass(px,pz){
   if(Math.hypot(px-grassX,pz-grassZ)<3)return;grassX=px;grassZ=pz;const wl=L.def.water===null?-99:L.def.water;
   for(let i=0;i<GN;i++){
     let x=grassOff[i*4],z=grassOff[i*4+1];x+=Math.round((px-x)/GT)*GT;z+=Math.round((pz-z)/GT)*GT;
-    const d=Math.hypot(x-px,z-pz),h=H(x,z),s=(L.def.snow?0:1)*grassOff[i*4+3]*smooth(GT/2,GT/2-8,d)*(1-clamp(L.def.dust(x,z)*1.6,0,1))*smooth(2.5,5,roadDist(x,z))*smooth(wl+.4,wl+1.2,h);
+    const d=Math.hypot(x-px,z-pz),h=H(x,z),s=(L.def.snow?0:1)*(i<GN*[.3,.65,1][clamp(save.q===undefined?1:save.q,0,2)]?1:0)*grassOff[i*4+3]*smooth(GT/2,GT/2-8,d)*(1-clamp(L.def.dust(x,z)*1.6,0,1))*smooth(2.5,5,roadDist(x,z))*smooth(wl+.4,wl+1.2,h);
     _go.position.set(x,h-.02,z);_go.rotation.y=grassOff[i*4+2];_go.scale.setScalar(s);_go.updateMatrix();grass.setMatrixAt(i,_go.matrix);
   }
   grass.instanceMatrix.needsUpdate=true;
@@ -1668,9 +1669,9 @@ function vehicleControl(v,dt){
   const fx=-Math.sin(v.yaw),fz=-Math.cos(v.yaw),nx=v.pos.x+fx*v.sp*dt,nz=v.pos.z+fz*v.sp*dt;
   if(Math.abs(v.sp)>.05){if(!vehBlocked(v,nx,nz)){v.pos.x=nx;v.pos.z=nz}
     else if(!vehBlocked(v,v.pos.x+fx*v.sp*dt*.3,v.pos.z+fz*v.sp*dt*.3)){v.pos.x+=fx*v.sp*dt*.3;v.pos.z+=fz*v.sp*dt*.3;v.sp*=.8}
-    else{const s=Math.abs(v.sp);if(s>5){v.hp-=Math.floor(s/5);sfx.thud(.5,'metal');puff(v.box.c,0xffe08a,.4,4,2,true,.3);addHeat(.1);if(v.hp<=0)vehicleDestroyed(v)}v.sp=-v.sp*.25}}
+    else{const s=Math.abs(v.sp);if(s>5){v.hp-=Math.floor(s/6);sfx.thud(.5,'metal');puff(v.box.c,0xffe08a,.4,4,2,true,.3);addHeat(.1);if(v.hp<=0)vehicleDestroyed(v)}v.sp=-v.sp*.25}}
   v.moving=true;
-  const f2=[v.pos.x+fx*1.8,v.pos.z+fz*1.8];if(Math.abs(v.sp)>4)for(const e of enemies){if(e.state==='dead'||e.state==='gone'||e.state==='ride'||e.state==='drive')continue;if(Math.hypot(e.pos.x-f2[0],e.pos.z-f2[1])<1.5&&Math.abs(e.pos.y-v.pos.y)<2){killEnemy(e,'torso',0,true);feed('Run over');addHeat(.45)}}
+  const f2=[v.pos.x+fx*1.8,v.pos.z+fz*1.8];if(Math.abs(v.sp)>4)for(const e of enemies){if(e.state==='dead'||e.state==='gone'||e.state==='ride'||e.state==='drive')continue;if(Math.hypot(e.pos.x-f2[0],e.pos.z-f2[1])<2.3&&Math.abs(e.pos.y-v.pos.y)<3.2){killEnemy(e,'torso',0,true);feed('Run over');addHeat(.45)}}
   v.noiseT-=dt;if(v.noiseT<=0){v.noiseT=1.1;const R=45+Math.abs(v.sp)*7*(G_.mask>0?.4:1);for(const e of enemies)if(!e.civ&&e.state==='patrol'&&Math.hypot(e.pos.x-v.pos.x,e.pos.z-v.pos.z)<R)suspect(e,v.pos);if(Math.abs(v.sp)>10)addHeat(.02)}
 }
 function driveTick(dt,rt){
@@ -1710,7 +1711,7 @@ function callReinforcements(){
   const path=dense.slice(0,Math.max(2,bi+1));if(path.length<2)return;
   const v=makeVehicle({pts:path,speed:13,hp:7,type:'truck',reinf:true});v.moving=true;v.reinfLk=new V(P.x+(Math.random()-.5)*50,P.pos.y,P.z+(Math.random()-.5)*50);spawnCrew(v,4);toast('Reinforcement truck on the road',true);return v}
 function spawnVehicles(){
-  const def=L.def,pv=def.pv;if(pv){const v=makeVehicle({pts:[[pv[0],pv[1]],[pv[0]+Math.sin(pv[2]||0)*-5,pv[1]-Math.cos(pv[2]||0)*5]],speed:0,hp:26,type:'jeep',mine:true});v.yaw=pv[2]||0;v.pos.y=H(pv[0],pv[1]);updateVehicle(v,0)}
+  const def=L.def,pv=def.pv;if(pv){const v=makeVehicle({pts:[[pv[0],pv[1]],[pv[0]+Math.sin(pv[2]||0)*-5,pv[1]-Math.cos(pv[2]||0)*5]],speed:0,hp:40,type:'jeep',mine:true});v.yaw=pv[2]||0;v.pos.y=H(pv[0],pv[1]);updateVehicle(v,0)}
   for(const pt of def.patrols||[]){const v=makeVehicle({pts:pt.pts,speed:pt.speed||5,hp:pt.truck?9:7,type:pt.truck?'truck':'jeep',loop:true});v.moving=true;spawnCrew(v,pt.n||2)}}
 
 function hitVehicle(v,hit,b){
@@ -2327,14 +2328,16 @@ function renderMenu(){
     '<button class="go" data-i="'+i+'">Deploy</button></article>'});
   $('sheets').innerHTML=h;
   $('kit').innerHTML=UPGRADES.map(u=>{const own=save.up[u.id];return '<div class="row"><b>'+u.name+'</b><span>'+u.desc+'</span><button data-u="'+u.id+'" class="'+(own?'own':'')+'"'+(own||save.cash<u.cost?' disabled':'')+'>'+(own?'Fitted':money(u.cost))+'</button></div>'}).join('');
-  $('assist').checked=save.assist;$('sens').value=save.sens;
+  $('assist').checked=save.assist;$('sens').value=save.sens;$('quality').value=String(save.q===undefined?1:save.q);
 }
 $('sheets').addEventListener('click',e=>{const b=e.target.closest('.go');if(b)startContract(+b.dataset.i)});
 $('kit').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const u=UPGRADES.find(x=>x.id===b.dataset.u);if(save.cash>=u.cost){save.cash-=u.cost;save.up[u.id]=true;persist();renderMenu()}});
 $('assist').addEventListener('change',e=>{save.assist=e.target.checked;persist()});
 $('sens').addEventListener('input',e=>{save.sens=+e.target.value;persist()});
+$('quality').addEventListener('change',e=>{save.q=+e.target.value;persist();applyQuality()});
 
 /* ================= main loop ================= */
+function applyQuality(){const q=clamp(save.q===undefined?1:save.q,0,2);renderer.setPixelRatio(Math.min(devicePixelRatio||1,[.7,1,1.5][q]));const ms=[1024,1536,2048][q];if(sun.shadow.mapSize.x!==ms){sun.shadow.mapSize.set(ms,ms);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null}}resize();grassX=1e9}
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=cineCam.aspect=w/h;camera.updateProjectionMatrix();cineCam.updateProjectionMatrix();retDirty=true}
 addEventListener('resize',resize);
 const _sf=new V;let shExt=75;
@@ -2395,9 +2398,9 @@ function step(now,nr){
   sky.position.copy(activeCam.position);updateGrass(activeCam.position.x,activeCam.position.z);updateShadow();
   if(!nr)renderer.render(scene,activeCam);
 }
-buildLevel('basin');setSky('dawn');setupMap();setupHelp();resize();camera.fov=55;camera.updateProjectionMatrix();renderMenu();
+buildLevel('basin');setSky('dawn');setupMap();setupHelp();applyQuality();camera.fov=55;camera.updateProjectionMatrix();renderMenu();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawTopo);
 requestAnimationFrame(frame);
-window.__cm={dbg:()=>({scene,snowfall,SKIES,setSky,renderer,camera,puffs,decals,emitters}),raiseAlarm,alertEnemy,callReinforcements,useVehicle,pickCover,adv:(n,k)=>{for(const c of k||[])keys[c]=true;for(let i=0;i<n&&G_.state==='play';i++)step(last+16.7,true);for(const c of k||[])keys[c]=false},audio:()=>A.c?Object.keys(A.B).length:-1,vehicles:()=>vehicles,G:()=>G_,player,enemies:()=>enemies,fire,H:(x,z)=>H(x,z),start:startContract,L:()=>L,groundAt};
+window.__cm={killEnemy,checkObjectives,objPos,dbg:()=>({scene,snowfall,SKIES,setSky,renderer,camera,puffs,decals,emitters}),raiseAlarm,alertEnemy,callReinforcements,useVehicle,pickCover,adv:(n,k)=>{for(const c of k||[])keys[c]=true;for(let i=0;i<n&&G_.state==='play';i++)step(last+16.7,true);for(const c of k||[])keys[c]=false},audio:()=>A.c?Object.keys(A.B).length:-1,vehicles:()=>vehicles,G:()=>G_,player,enemies:()=>enemies,fire,H:(x,z)=>H(x,z),start:startContract,L:()=>L,groundAt};
 })();
 </script>
