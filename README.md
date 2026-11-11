@@ -39,6 +39,7 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 * **Gegner-KI:** Gegner suchen Deckung, rücken von Deckung zu Deckung vor, lugen aus der Deckung, flankieren, funken sich Hinweise zu (Reichweite sinkt, wenn das Relais zerstört ist) und durchsuchen die letzte bekannte Position. Beim Aufspüren einer Leiche oder eines Schusses verstecken sich Wachen, statt zu stürmen.
 * **Versteckte Scharfschützen:** getarnte Schützen liegen im Gelände. Ein Schuss von ihnen erscheint als roter Punkt auf dem Kompass; nach einem Schuss wechseln sie die Stellung.
 * **Fahrzeuge:** eigener Jeep (befahrbar, überfährt Gegner), Patrouillenfahrzeuge der Gegner, die bei Alarm absitzen, und ein Verstärkungs-Lkw nach einem Sirenenalarm.
+* **Figuren:** Jede Person ist ein Skinned Mesh mit 15 Knochen und zufälligem Aussehen (Helm, Mütze, Weste, Rucksack, Brille, Mantel, Ghillie). Arme und Beine nutzen Zwei-Knochen-IK: Hände folgen den Waffengriffen, Schritte folgen der gelaufenen Strecke. Wachen schlendern mit wechselndem Tempo, rauchen, funken, strecken sich, unterhalten sich zu zweit und blicken sich um; Zivilisten fliehen oder kauern.
 * **Welt:** begehbare Häuser mit Treppen, Leitern, Balkonen und Dächern; Wasser, Wetter, Tag und Nacht.
 * **Ausrüstung:** Nach jedem Auftrag lassen sich Schalldämpfer, Zielfernrohr, Schaft und Munitionstasche kaufen. Der Spielstand liegt im `localStorage` des Browsers.
 
@@ -53,7 +54,7 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 
 ## Karte und Hilfe
 
-`Tab` öffnet die Übersichtskarte: Höhenlinien, Raster, Benennungen, berechnete Schussplätze (V1, V2) mit Reichweite, deckungsorientierte Schleichroute, Aufklärungszonen der Ziele und Strategietipps. Mausrad zoomt, Ziehen verschiebt, Klick setzt einen Wegpunkt. `H` öffnet das Feldhandbuch (steht auch auf dem Startbildschirm).
+`Tab` öffnet die Übersichtskarte: Höhenlinien, Raster, Benennungen, berechnete Schussplätze (V1, V2) mit Reichweite, deckungsorientierte Schleichroute, Aufklärungszonen der Ziele und Strategietipps. Die Karte zeigt das gesamte Gelände samt Umgebung; das Missionsgebiet ist gestrichelt umrandet. Mausrad zoomt, Ziehen verschiebt, Klick setzt einen Wegpunkt. `H` öffnet das Feldhandbuch (steht auch auf dem Startbildschirm).
 
 ## Technik
 
