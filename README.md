@@ -23,7 +23,7 @@ Dann `http://localhost:8000/cold-meridian.html` öffnen.
 | `Shift` (im Zielfernrohr) | Luft anhalten: ruhiger zielen, Zeit läuft langsamer |
 | `Q` / `E` | Absehen-Einstellung (Nullpunkt) in 50-m-Schritten |
 | `1` `2` `3` | Standard-, panzerbrechende, Lockmunition |
-| `C` `X` `Leertaste` | Hocken, Liegen, Aufstehen |
+| `C` `X` `Leertaste` | Hocken, Liegen, Aufstehen; `Leertaste` im Stehen springt (ca. 1,3 m) |
 | Linksklick / `R` | Schießen / Nachladen |
 | `T` | Aufklärungsdrohne mit Videobild (ca. 1 Minute Akku, lädt in unter einer Minute nach): `W A S D` fliegen, `Q` hoch, `E` runter, `Shift` schneller, Maus schaut, Klick markiert die Einheit im Bild. Zu nahe an Einheiten lösen Alarm aus. |
 | `L` | Scheinwerfer des Jeeps (standardmäßig aus; im Dunkeln oder Nebel ist der Jeep ohne Licht kaum zu sehen) |
